@@ -1,0 +1,117 @@
+---
+ANSIBLE_METADATA: |
+    {
+      'metadata_version': '1.1',
+      'status': ['preview'],
+      'supported_by': 'network'
+    }
+DOCUMENTATION: |
+    module: ios_class_maps
+    version_added: 0.01
+    short_description: Manages Class-Maps on IOS devices.
+    description: This module configures and manages Class-Maps on IOS platforms.
+    author: Ambrus Fay (@fay-ambrus)
+    notes:
+        - Tested against Cisco IOSXE version 17.3 on CML.
+        - This module works with connection C(network_cli).
+          See L(IOS Platform Options,../network/user_guide/platform_ios.html).
+    options:
+      config:
+        description: A dictionary of Class-Map options.
+        type: list
+        elements: dict
+        suboptions:
+            name:
+                description:
+                    - The name of the Class-Map.
+                required: true
+                type: str
+            match_type:
+                description:
+                    - Determines how packets are evaluated when multiple match criteria exist.
+                default: match-all
+                type: str
+                choices:
+                    - match-all
+                    - match-any
+            class_map_type:
+                description:
+                    - Determines the type of the class map.
+                    - For more informtion on different Class-Map types, refer to the manual.
+                default: inspect
+                type: str
+                choices:
+                    - access-control
+                    - appnav
+                    - control
+                    - inspect
+                    - multicast-flows
+                    - site-manager
+                    - stack
+                    - traffic
+            class_map_decription:
+                description:
+                    - Class-Map description
+                type: str
+            matches:
+                description:
+                    - classification criteria
+                type: list
+                elements: dict
+                suboptions:
+                    access_groups:
+                        description:
+                            - Access-groups to match.
+                            - Identified by a name or number.
+                        type: list
+                        elements: str
+                    any:
+                        description:
+                            - Matches any packet.
+                        type: bool
+                    applications:
+                        description:
+                            - Apllication to match.
+                        type: dict
+                        suboptions:
+                            regex:
+                                description:
+                                    - Application name regexp
+                                type: str
+                            application_group:
+                                description:
+                                    - Application Group to match
+                                type: dict
+                                suboptions:
+                                    telepresence-group:
+                                        description: Telepresence Group
+                                        type: bool
+                                        default: false
+                                    vmware-group:
+                                        description: VMWARE Group
+                                        type: bool
+                                        default: false
+                                    webex-group:
+                                        description: WebEx Group
+                                        type: bool
+                                        default: false
+      state:
+        choices:
+          - merged
+          - replaced
+          - overridden
+          - deleted
+          - gathered
+          - rendered
+          - parsed
+        default: merged
+        description: description here
+        type: str
+COPYRIGHT: Copyright 2022 Kerak
+EXAMPLES:
+    - deleted_example_01.txt
+    - merged_example_01.txt
+    - overridden_example_01.txt
+    - replaced_example_01.txt
+NETWORK_OS: ios
+RESOURCE: class-maps

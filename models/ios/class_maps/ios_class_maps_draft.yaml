@@ -45,7 +45,7 @@ options:
             description:
                 - Class-Map description
             type: str
-        matches:
+        match:
             description:
                 - classification criteria
             type: list
@@ -55,18 +55,31 @@ options:
                     description:
                         - Access-groups to match.
                         - Identified by a name or number.
-                    type: list
-                    elements: str
+                    type: dict
+                    mutually_exclusive: [name, number]
+                    suboptions:
+                        name:
+                            description:
+                                - Specifies a named ACL.
+                                - The name can be up to 40 alphanumeric characters.
+                            type: str
+                        number:
+                            description:
+                                - Specifies a numbered ACL.
+                                - The range is from 1 to 2699.
+                            type: int
                 any:
                     description:
-                        - Matches any packet.
+                        - If set to true, configures the match criteria to be successful for all packets.
                     type: bool
-                applications:
+                    default: false
+                application:
                     description:
-                        - Apllication to match.
-                    type: dict
+                        - Use application metadata as a match criterion for classification.
+                    type: list
+                    elements: dict
                     suboptions:
-                        regex:
+                        regexp:
                             description:
                                 - Application name regexp
                             type: str
@@ -76,17 +89,171 @@ options:
                             type: dict
                             suboptions:
                                 telepresence-group:
-                                    description: Telepresence Group
                                     type: bool
                                     default: false
                                 vmware-group:
-                                    description: VMWARE Group
                                     type: bool
                                     default: false
                                 webex-group:
-                                    description: WebEx Group
                                     type: bool
                                     default: false
+                        attribute:
+                            description:
+                                - Specifies the relevant attribute to match.
+                            type: dict
+                            suboptions:
+                                category:
+                                    description:
+                                        - Specifies the category type that the control plane classification engine must match.
+                                    type: str
+                                    choices:
+                                        - business-and-productivity-tools
+                                        - physical-security
+                                        - voice-and-video
+                                device_class:
+                                    description:
+                                        - Specifies the device class to match.
+                                    type: str
+                                    choices:
+                                        - desktop-conferencing
+                                        - desktop-virtualization
+                                        - physical-phone
+                                        - room-conferencing
+                                        - software-phone
+                                        - surveillance
+                                media_type:
+                                    description:
+                                        - Specifies the type of media to match.
+                                    type: str
+                                    choices:
+                                        - audio
+                                        - audio-video
+                                        - control
+                                        - data
+                                        - video
+                                sub_category:
+                                    description:
+                                        - Specifies the subcategory to match.
+                                    type: str
+                                    choices:
+                                        - control-and-signaling
+                                        - remote-access-terminal
+                                        - video-surveillance
+                                        - voice-video-chat-collaboration
+                                tcl:
+                                    description:
+                                        - Traffic Class Label to match.
+                                    type: str
+                        application_name:
+                        cisco_phone:
+                            description: Cisco IP Phones and PC-based Unified Communicators
+                            type: dict
+                            suboptions:
+                                multiplex_type:
+                                    type: str
+                                    choices:
+                                        - set
+                                        - unset
+                                        - both
+                                    default: both
+                                signalling_type:
+                                    type: dict
+                                    suboptions:
+                                        bfcp:
+                                            type: bool
+                                            default: false
+                                        h323:
+                                            type: bool
+                                            default: false
+                                        mgcp:
+                                            type: bool
+                                            default: false
+                                        sip:
+                                            type: bool
+                                            default: false
+                                        skinny:
+                                            type: bool
+                                            default: false
+                                source:
+                                    type: dict
+                                    suboptions:
+                                        cli:
+                                            description: CLI
+                                            type: bool
+                                            default: true
+                                        cube:
+                                            description: Cisco Unified Border Element
+                                            type: bool
+                                            default: true
+                                        msp:
+                                            description: Media-Proxy Services
+                                            type: bool
+                                            default: true
+                                        nbar:
+                                            description: Network Based Application Recognition
+                                            type: bool
+                                            default: true
+                                        rfmd:
+                                            description: Reverse flow metadata
+                                            type: bool
+                                            default: true
+                                        rsvp:
+                                            description: Resource Reservation Protocol
+                                            type: bool
+                                            default: true
+                                        cac:
+                                            description: QoS Local Call Admission Control
+                                            type: bool
+                                            default: true
+                                traffic_type:
+                                    type: dict
+                                    suboptions:
+                                        control:
+                                            description: control traffic type
+                                            type: bool
+                                            default: true
+                                transport_type:
+                                    type: dict
+                                    suboptions:
+                                        rtcp:
+                                            type: bool
+                                            default: true
+                                        rtp:
+                                            type: bool
+                                            default: true
+                                
+                        citrix:
+                            description: Citrix Application
+                            type: dict
+
+                        h323:
+                            description: H323 Protocol
+                        ip-camera:
+                            description: IP Video Surveillance Camera
+                        jabber:
+                            description: Jabber Protocol
+                        rtp:
+                            description: Real Time Protocol
+                        rtsp:
+                            description: RTSP Protocol
+                        sip:
+                            description: Session Initiation Protocol
+                        surveillance_distribution:
+                            description: Surveillance Distribution
+                        telepresence_control:
+                            description: telepresence-control stream
+                        telepresence_data:
+                            description: telepresence-data stream
+                        telepresence-media:
+                            description: telepresence-media stream
+                        vmware-view:
+                            description: VMWARE View
+                        webex-meeting:
+                            description: webex-meeting stream
+                        wyze-zero-client:
+                            description: WYZE Zero client
+                        xmpp-client:
+                            description: XMPP Client               
   state:
     choices:
       - merged

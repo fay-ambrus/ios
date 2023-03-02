@@ -45,7 +45,7 @@ options:
             description:
                 - Class-Map description
             type: str
-        match:
+        matches:
             description:
                 - classification criteria
             type: list
@@ -70,33 +70,261 @@ options:
                             type: int
                 any:
                     description:
-                        - If set to true, configures the match criteria to be successful for all packets.
+                        - Configures the match criteria to be successful for all packets.
                     type: bool
-                    default: false
-                application:
+                application_metadata:
                     description:
                         - Use application metadata as a match criterion for classification.
                     type: list
                     elements: dict
+                    mutually_exclusive: [regexp, application_group, attribute, application_name]
                     suboptions:
-                        regexp:
-                            description:
-                                - Application name regexp
-                            type: str
                         application_group:
                             description:
                                 - Application Group to match
+                            type: str
+                            choices:
+                                - telepresence-group
+                                - vmware-group
+                                - webex-group
+                        application:
+                            description:
+                                - Specific applications to match.
+                                - Also restrictable to source, vendor etc.
                             type: dict
+                            mutually_exclusive: [application_name, application_name_regexp]
                             suboptions:
-                                telepresence-group:
-                                    type: bool
-                                    default: false
-                                vmware-group:
-                                    type: bool
-                                    default: false
-                                webex-group:
-                                    type: bool
-                                    default: false
+                                application_name:
+                                    description: The name of the application to match.
+                                    type: dict
+                                    suboptions:
+                                        cisco_phone:
+                                            description: Cisco IP Phones and PC-based Unified Communicators
+                                            type: dict
+                                            suboptions:
+                                                traffic_type:
+                                                    description: Traffic Type
+                                                    type: str
+                                                    choices:
+                                                        - control
+                                                transport_type:
+                                                    description: Transport Type
+                                                    type: str
+                                                    choices:
+                                                        - rtcp
+                                                        - rtp
+                                                multiplex_type:
+                                                    description: Multiplex Type
+                                                    type: str
+                                                    choices:
+                                                        - set
+                                                        - unset
+                                                signaling_type:
+                                                    description: Signaling Type
+                                                    type: str
+                                                    choices:
+                                                        - bfcp
+                                                        - h323
+                                                        - mgcp
+                                                        - sip
+                                                        - skinny
+                                        citrix:
+                                            description: Citrix Application
+                                            type: dict
+                                            suboptions:
+                                                traffic_type:
+                                                    description: Traffic Type
+                                                    type: str
+                                                    choices:
+                                                        - background
+                                                        - bulk
+                                                        - desktop
+                                                        - interactive
+                                                        - realtime
+                                                        - session
+                                                        - streaming
+                                                        - tunnel
+                                                transport_type:
+                                                    description: Transport Type
+                                                    type: str
+                                                    choices:
+                                                        - ica
+                                                        - rdp
+                                        h323:
+                                            description:
+                                            type: bool
+                                        ip-camera:
+                                            description:
+                                            type: dict
+                                            suboptions:
+                                                traffic_type:
+                                                    description: Traffic Type
+                                                    type: str
+                                                    choices:
+                                                        - realtime
+                                                transport_type:
+                                                    description: Transport Type
+                                                    type: str
+                                                    choices:
+                                                        - rtp
+                                                multiplex_type:
+                                                    description: Multiplex Type
+                                                    type: str
+                                                    choices:
+                                                        - set
+                                                        - unset
+                                                signaling_type:
+                                                    description: Signaling Type
+                                                    type: str
+                                                    choices:
+                                                        - rtsp
+                                        jabber:
+                                            description:
+                                            type: bool
+                                        rtp:
+                                            description:
+                                            type: bool
+                                        rtsp:
+                                            description:
+                                            type: bool
+                                        sip:
+                                            description:
+                                            type: bool
+                                        surveillance-distribution:
+                                            description:
+                                            type: dict
+                                            suboptions:
+                                                traffic_type:
+                                                    description: Traffic Type
+                                                    type: str
+                                                    choices:
+                                                        - realtime
+                                                        - streaming
+                                                transport_type:
+                                                    description: Transport Type
+                                                    type: str
+                                                    choices:
+                                                        - rtp
+                                                multiplex_type:
+                                                    description: Multiplex Type
+                                                    type: str
+                                                    choices:
+                                                        - set
+                                                        - unset
+                                                signaling_type:
+                                                    description: Signaling Type
+                                                    type: str
+                                                    choices:
+                                                        - rtsp
+                                        telepresence-control:
+                                            description:
+                                            type: dict
+                                            suboptions:
+                                                signaling_type:
+                                                    description: Signaling Type
+                                                    type: str
+                                                    choices:
+                                                        - bfcp
+                                                        - ccp
+                                                        - clue
+                                                        - h323
+                                                        - mscp
+                                                        - sip
+                                                        - xccp
+                                        telepresence-data:
+                                            description:
+                                            type: bool
+                                        telepresence-media:
+                                            description:
+                                            type: dict
+                                            suboptions:
+                                                traffic_type:
+                                                    description: Traffic Type
+                                                    type: str
+                                                    choices:
+                                                        - control
+                                                transport_type:
+                                                    description: Transport Type
+                                                    type: str
+                                                    choices:
+                                                        - rtcp
+                                                        - rtp
+                                                multiplex_type:
+                                                    description: Multiplex Type
+                                                    type: str
+                                                    choices:
+                                                        - set
+                                                        - unset
+                                        vmware-view:
+                                            description:
+                                            type: dict
+                                            suboptions:
+                                                traffic_type:
+                                                    description: Traffic Type
+                                                    type: str
+                                                    choices:
+                                                        - desktop
+                                                        - desktop-feedback
+                                                        - session
+                                                        - streaming
+                                                        - tunnel
+                                                        - usb-redirection
+                                                transport_type:
+                                                    description: Transport Type
+                                                    type: str
+                                                    choices:
+                                                        - pcoip
+                                                        - rdp
+                                        webex-meeting:
+                                            description:
+                                            type: dict
+                                            suboptions:
+                                                traffic_type:
+                                                    description: Traffic Type
+                                                    type: str
+                                                    choices:
+                                                        - control
+                                                        - sharing
+                                                        - streaming
+                                                transport_type:
+                                                    description: Transport Type
+                                                    type: str
+                                                    choices:
+                                                        - http
+                                        wyze-zero-client:
+                                            description:
+                                            type: dict
+                                            suboptions:
+                                                traffic_type:
+                                                    description: Traffic Type
+                                                    type: str
+                                                    choices:
+                                                        - streaming
+                                        xmpp-client:
+                                            description:
+                                            type: bool
+                                application_name_regexp:
+                                    description: Match all packets with applicaiton name matching the given regular expression.
+                                    type: str
+                                source:
+                                    description: Specifies the source of the application.
+                                    type: str
+                                    choices:
+                                        - cli
+                                        - cube
+                                        - msp
+                                        - nbar
+                                        - rfmd
+                                        - rsvp
+                                        - cac
+                                vendor:
+                                    description:
+                                        - Specifies the name of the vendor.
+                                        - Refer to the manual to get a list of supported vendors for the respective application name.
+                                    type: str
+                                version:
+                                    description: Specifies the version number.
+                                    type: str
                         attribute:
                             description:
                                 - Specifies the relevant attribute to match.
@@ -144,116 +372,118 @@ options:
                                     description:
                                         - Traffic Class Label to match.
                                     type: str
-                        application_name:
-                        cisco_phone:
-                            description: Cisco IP Phones and PC-based Unified Communicators
+                cac_status:
+                    description: Call Admission Control
+                    type: str
+                    choices:
+                        - admitted
+                        - un-admitted
+                class_map_name:
+                    description: Name of the traffic class to use as a match criterion.
+                    type: str
+                cos:
+                    description:
+                        - Match a packet on the basis of a Layer 2 class of service (CoS)/Inter-Switch Link (ISL) marking
+                        - Up to 8  class-of-service values may be entered
+                    type: list
+                    elements: int
+                cos_inner:
+                    description: 
+                        - Match the inner cos of QinQ packets on a Layer 2 class of service (CoS) marking
+                        - UP to 4 class-of-service values may be entered.
+                    type: list
+                    elements: int
+                desination_address_mac:
+                    description:
+                        - Use the destination MAC address as a match criterion
+                        - address format -> 00:00:00:00:00:00
+                    type: str
+                discard_class:
+                    description:
+                        - Number of the discard class being matched.
+                        - Valid values are 0 to 7.
+                    type: int
+                dscp:
+                    description: 
+                    type: dict
+                    suboptions:
+                        dscp_values:
+                            description: Numbers (0 to 63) representing differentiated services code point values
+                            type: list
+                            elements: int
+                        dscp_af_values:
+                            description: AF numbers (for example, af11) identifying specific AF DSCPs
                             type: dict
                             suboptions:
-                                multiplex_type:
-                                    type: str
-                                    choices:
-                                        - set
-                                        - unset
-                                        - both
-                                    default: both
-                                signalling_type:
-                                    type: dict
-                                    suboptions:
-                                        bfcp:
-                                            type: bool
-                                            default: false
-                                        h323:
-                                            type: bool
-                                            default: false
-                                        mgcp:
-                                            type: bool
-                                            default: false
-                                        sip:
-                                            type: bool
-                                            default: false
-                                        skinny:
-                                            type: bool
-                                            default: false
-                                source:
-                                    type: dict
-                                    suboptions:
-                                        cli:
-                                            description: CLI
-                                            type: bool
-                                            default: true
-                                        cube:
-                                            description: Cisco Unified Border Element
-                                            type: bool
-                                            default: true
-                                        msp:
-                                            description: Media-Proxy Services
-                                            type: bool
-                                            default: true
-                                        nbar:
-                                            description: Network Based Application Recognition
-                                            type: bool
-                                            default: true
-                                        rfmd:
-                                            description: Reverse flow metadata
-                                            type: bool
-                                            default: true
-                                        rsvp:
-                                            description: Resource Reservation Protocol
-                                            type: bool
-                                            default: true
-                                        cac:
-                                            description: QoS Local Call Admission Control
-                                            type: bool
-                                            default: true
-                                traffic_type:
-                                    type: dict
-                                    suboptions:
-                                        control:
-                                            description: control traffic type
-                                            type: bool
-                                            default: true
-                                transport_type:
-                                    type: dict
-                                    suboptions:
-                                        rtcp:
-                                            type: bool
-                                            default: true
-                                        rtp:
-                                            type: bool
-                                            default: true
-                                
-                        citrix:
-                            description: Citrix Application
+                                af11:
+                                    description: Match packets with AF11 dscp (001010)
+                                    type: bool
+                                af12:
+                                    description: Match packets with AF12 dscp (001100)
+                                    type: bool
+                                af13:
+                                    description: Match packets with AF13 dscp (001110)
+                                    type: bool
+                                af21:
+                                    description: Match packets with AF21 dscp (010010)
+                                    type: bool
+                                af22:
+                                    description: Match packets with AF22 dscp (010100)
+                                    type: bool
+                                af23:
+                                    description: Match packets with AF23 dscp (010110)
+                                    type: bool
+                                af31:
+                                    description: Match packets with AF31 dscp (011010)
+                                    type: bool
+                                af32:
+                                    description: Match packets with AF32 dscp (011100)
+                                    type: bool
+                                af33:
+                                    description: Match packets with AF33 dscp (011110)
+                                    type: bool
+                                af41:
+                                    description: Match packets with AF41 dscp (100010)
+                                    type: bool
+                                af42:
+                                    description: Match packets with AF42 dscp (100100)
+                                    type: bool
+                                af43:
+                                    description: Match packets with AF43 dscp (100110)
+                                    type: bool
+                        dscp_cp_values:
+                            dscription: CS numbers (for example, cs1) identifying specific CS DSCPs
                             type: dict
-
-                        h323:
-                            description: H323 Protocol
-                        ip-camera:
-                            description: IP Video Surveillance Camera
-                        jabber:
-                            description: Jabber Protocol
-                        rtp:
-                            description: Real Time Protocol
-                        rtsp:
-                            description: RTSP Protocol
-                        sip:
-                            description: Session Initiation Protocol
-                        surveillance_distribution:
-                            description: Surveillance Distribution
-                        telepresence_control:
-                            description: telepresence-control stream
-                        telepresence_data:
-                            description: telepresence-data stream
-                        telepresence-media:
-                            description: telepresence-media stream
-                        vmware-view:
-                            description: VMWARE View
-                        webex-meeting:
-                            description: webex-meeting stream
-                        wyze-zero-client:
-                            description: WYZE Zero client
-                        xmpp-client:
-                            description: XMPP Client               
+                            suboptions:
+                                cs1:
+                                    description: Match packets with CS1(precedence 1) dscp (001000)
+                                    type: bool
+                                cs2:
+                                    description: Match packets with CS2(precedence 2) dscp (010000)
+                                    type: bool
+                                cs3:
+                                    description: Match packets with CS3(precedence 3) dscp (011000)
+                                    type: bool
+                                cs4:
+                                    description: Match packets with CS4(precedence 4) dscp (100000)
+                                    type: bool
+                                cs5:
+                                    description: Match packets with CS5(precedence 5) dscp (101000)
+                                    type: bool
+                                cs6:
+                                    description: Match packets with CS6(precedence 6) dscp (110000)
+                                    type: bool
+                                cs7:
+                                    description: Match packets with CS7(precedence 7) dscp (111000)
+                                    type: bool
+                        default_value:
+                            description: Match packets with default dscp (000000)
+                            type: bool
+                        ef_value:
+                            description: Match packets with EF dscp (101110)
+                            type: bool
+                        
+                
   state:
     choices:
       - merged

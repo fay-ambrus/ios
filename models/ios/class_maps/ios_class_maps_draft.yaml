@@ -650,12 +650,28 @@ options:
                                         - Minimum length value of the Layer 3 packet length, in bytes.
                                         - The range is from 1 to 9216.
                                     type: int
-                        match_protocol:
+                        protocol:
                             description:
                                 - Match criterion on the basis of a specified protocol
-                                - For the complete list of the available protocols, refer to your manual!
+                                - For a complete list of supported protocols, see the online help for the matchprotocol command on the router that you are using.
                             type: str
-                        match_protocol_attribute:
+                        protocol_nbar:
+                            description:
+                                - Configure Network-Based Application Recognition (NBAR) to match traffic by a protocol type that is known to NBAR.
+                                - To get a complete list of the available NBAR protocols, refer to your manual.
+                            type: dict
+                            suboptions:
+                                protocol_name:
+                                    description: Particular protocol type that is known to NBAR.
+                                    type: str
+                                    required: true
+                                variable_field_name:
+                                    description:  Predefined variable that was created when you created a custom protocol.
+                                    type: str
+                                value:
+                                    description: Specific value in the custom payload to match.
+                                    type: str
+                        protocol_attribute:
                             description: Configure the match criterion based on the specified application group
                             type: dict
                             mutually_exclusive: [application_family, application_group, application_set, business_relevance, category, encrypted, sub_category, traffic-class, tunnel]
@@ -693,9 +709,65 @@ options:
                                     choices:
                                         - encrypted_yes
                                         - encrypted_no
-                                        - encrypted_unassigned
-                                    
-
+                                        - encrypted_unassigneds
+                                sub_category:
+                                    description:
+                                        - Name of the application sub-category used as a matching criterion.
+                                        - Refer to the manual for available application families!
+                                    type: str
+                                traffic_class:
+                                    description: Name of the SRND class to match.
+                                    type: str
+                                    choices:
+                                        - broadcast-video
+                                        - bulk-data
+                                        - multimedia-conferencing
+                                        - multimedia-streaming
+                                        - network-control  
+                                        - ops-admin-mgmt
+                                        - real-time-interactive
+                                        - signaling
+                                        - transactional-data
+                                        - voip-telephony
+                        qos_group:
+                            description:
+                                - To identify a specific quality of service (QoS) group value as a match criterion
+                                - Values from 0 to 99 are acceptable
+                            type: int
+                        security_group:
+                            description: Security group to match.
+                            type: dict
+                            mutually_exclusive:  
+                            suboptions:
+                                source_tag:
+                                    description:
+                                        - Source security group tag id to match.
+                                        - 0-65533
+                                    type: int
+                                destination_tag:
+                                    description:
+                                        - Destination security group tag id to match.
+                                        - 0-65533
+                                    type: int
+                        source_mac_address:
+                            description: Use the source MAC address as a match criterion
+                            type: str
+                        traffic_category:
+                            description: I literally can't find anything on what this actually means...
+                            type: str
+                            choices:
+                                - allow
+                                - optimize
+                        vlan_id:
+                            description:
+                                - Use the VLAN IDas a match criterion.
+                                - Valid from 1 to 4049
+                            type: int
+                        vlan_id_inner:
+                            description:
+                                - Use the inner VLAN IDas a match criterion.
+                                - Valid from 1 to 4049
+                            type: int
                 negate:
                     description: Negate this match result.
                     type: bool

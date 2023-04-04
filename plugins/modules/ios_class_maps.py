@@ -61,12 +61,10 @@ options:
                 - stack
                 - traffic
         class_map_decription:
-            description:
-                - Class-Map description
+            description: Comment or a description that is added to the class map.
             type: str
         matches:
-            description:
-                - classification criteria
+            description: A list of classification criteria.
             type: list
             elements: dict
             suboptions:
@@ -80,7 +78,7 @@ options:
                                 - Access-groups to match.
                                 - Identified by a name or number.
                             type: dict
-                            mutually_exclusive: [name, number]
+                            mutually_exclusive: [[name], [number]]
                             suboptions:
                                 name:
                                     description:
@@ -101,7 +99,7 @@ options:
                                 - Use application metadata as a match criterion for classification.
                             type: list
                             elements: dict
-                            mutually_exclusive: [regexp, application_group, attribute, application_name]
+                            mutually_exclusive: [[regexp], [application_group], [attribute], [application_name]]
                             suboptions:
                                 application_group:
                                     description:
@@ -116,7 +114,7 @@ options:
                                         - Specific applications to match.
                                         - Also restrictable to source, vendor etc.
                                     type: dict
-                                    mutually_exclusive: [application_name, application_name_regexp]
+                                    mutually_exclusive: [[application_name], [application_name_regexp]]
                                     suboptions:
                                         application_name:
                                             description: The name of the application to match.
@@ -524,7 +522,7 @@ options:
                         ip_dscp:
                             description:
                             type: dict
-                            mututually_exclusive: [dscp_values, dscp_af_values, dscp_cp_values, default_value, ef_value]
+                            mututually_exclusive: [[dscp_values], [dscp_af_values], [dscp_cp_values], [default_value], [ef_value]]
                             suboptions:
                                 dscp_values:
                                     description: Numbers (0 to 63) representing differentiated services code point values
@@ -626,7 +624,7 @@ options:
                         metadata:
                             description: I dont know what the fuck is this.
                             type: dict
-                            mutually_exclusive: [cac_status, called_uri, caller_uri,]
+                            mutually_exclusive: [[cac_status], [called_uri], [caller_uri]]
                             suboptions:
                                 cac_status:
                                     description: Call Admission Control
@@ -693,7 +691,7 @@ options:
                         protocol_attribute:
                             description: Configure the match criterion based on the specified application group
                             type: dict
-                            mutually_exclusive: [application_family, application_group, application_set, business_relevance, category, encrypted, sub_category, traffic-class, tunnel]
+                            mutually_exclusive: [[application_family], [application_group], [application_set], [business_relevance], [category], [encrypted], [sub_category], [traffic-class], [tunnel]]
                             suboptions:
                                 application_family:
                                     description:

@@ -72,6 +72,32 @@ options:
                     description: A criterion to match.
                     type: dict
                     required: true
+                    mutually_exclusive:
+                        - [access_groups]
+                        - [any]
+                        - [application_metadata]
+                        - [class_map_name]
+                        - [cos]
+                        - [cos_inner]
+                        - [desination_address_mac]
+                        - [discard_class]
+                        - [object_group_security]
+                        - [input_interface]
+                        - [ip_dscp]
+                        - [ip_precedence]
+                        - [ip_rtp]
+                        - [metadata]
+                        - [mpls_experimental]
+                        - [packet_length]
+                        - [protocol]
+                        - [protocol_nbar]
+                        - [protocol_attribute]
+                        - [qos_group]
+                        - [security_group]
+                        - [source_mac_address]
+                        - [traffic_category]
+                        - [vlan_id]
+                        - [vlan_id_inner]
                     suboptions:
                         access_groups:
                             description:
@@ -622,30 +648,30 @@ options:
                                     type: int
                                     required: true
                         metadata:
-                            description: I dont know what the fuck is this.
+                            description: Use call metadata as match criterion.
                             type: dict
                             mutually_exclusive: [[cac_status], [called_uri], [caller_uri]]
                             suboptions:
                                 cac_status:
-                                    description: Call Admission Control
+                                    description: Call Admission Control status
                                     type: str
                                     choices:
                                         - admitted
                                         - un-admitted
                                 called_uri:
-                                    description: todo
+                                    description: Called URI
                                     type: str
                                 calling_uri:
-                                    description:
+                                    description: Calling URI
                                     type: str
                                 device_model:
-                                    description: todo
+                                    description: Device model
                                     type: str
                                 global_session_id:
-                                    description: todo
+                                    description: Global Session ID (24 Chars)
                                     type: str
                                 multi_party_session_id:
-                                    description: todo
+                                    description: Multi Party Session ID
                                     type: str
                         mpls_experimental:
                             description:
@@ -754,7 +780,7 @@ options:
                         security_group:
                             description: Security group to match.
                             type: dict
-                            mutually_exclusive:  
+                            mutually_exclusive: [[source_tag], [destination_tag]]
                             suboptions:
                                 source_tag:
                                     description:
@@ -804,7 +830,7 @@ options:
 """
 
 EXAMPLES = """
-todo
+
 """
 
 RETURN = """

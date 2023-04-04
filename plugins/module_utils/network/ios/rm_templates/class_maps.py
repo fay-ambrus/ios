@@ -1,81 +1,50 @@
 # -*- coding: utf-8 -*-
-# todo: copyright information
+# Copyright 2023 Red Hat
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
 
 """
-The classmap parser templates file. This contains
+The Class_maps parser templates file. This contains
 a list of parser definitions and associated functions that
 facilitates both facts gathering and native command generation for
 the given network resource.
 """
-import re
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.network_template import (
+import re
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
 
+class Class_mapsTemplate(NetworkTemplate):
+    def __init__(self, lines=None, module=None):
+        super(Class_mapsTemplate, self).__init__(lines=lines, tmplt=self, module=module)
 
-# todo: this id bad and has to be rewritten later
-def _tmplt_classmap_entries(matches):
-    command = ""
-    if matches:
-        access_group = matches.get("access_group")
-        if access_group:
-            command += "match "
-            command += "access-group"
-            command += " "
-            command += access_group
-
-    return command
-
-
-class ClassMapTemplate(NetworkTemplate):
-    def __init__(self, lines=None):
-        super(ClassMapTemplate, self).__init__(lines=lines, tmplt=self)
-
+    # fmt: off
     PARSERS = [
         {
-            "name": "classmap_name",
+            "name": "key_a",
             "getval": re.compile(
-                r"""^\s*Class*
-                \s*Map*
-                \s*match-*
-                \s*(?P<match_type>all|any)*
-                \s*(?P<classmap_name>\S+)*
-                \s*.*
-                $""",
-                re.VERBOSE,
-            ),
-            "compval": "name",
-            "setval": "name",
+                r"""
+                ^key_a\s(?P<key_a>\S+)
+                $""", re.VERBOSE),
+            "setval": "",
             "result": {
-                "{{ classmap_name|d() }}": {
-                    "name": "{{ classmap_name }}",
-                    "match_type": "{{ match_type }}",
-                }
             },
-            "shared": True,
+            "shared": True
         },
         {
-            "name": "matches",
+            "name": "key_b",
             "getval": re.compile(
-                r"""^\s*Match*
-                    \s*access-group*
-                    \s*(?P<index_number>\d+)*
-                    \s*
-                $""",
-                re.VERBOSE
-            ),
-            "setval": _tmplt_classmap_entries,
-            "compval": "matches",
+                r"""
+                \s+key_b\s(?P<key_b>\S+)
+                $""", re.VERBOSE),
+            "setval": "",
             "result": {
-                "{{ classmap_name|d() }}": {
-                    "name": "{{ classmap_name }}",
-                    "matches": [
-                        {
-                            "access_group": "{{ index_number }}"
-                        }
-                    ]
-                }
-            }
-        }
+            },
+        },
     ]
+    # fmt: on

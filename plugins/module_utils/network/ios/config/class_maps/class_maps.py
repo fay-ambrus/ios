@@ -30,6 +30,7 @@ from ansible_collections.cisco.ios.plugins.module_utils.network.ios.facts.facts 
 from ansible_collections.cisco.ios.plugins.module_utils.network.ios.rm_templates.class_maps import (
     Class_mapsTemplate,
 )
+from syslog import syslog
 
 
 class Class_maps(ResourceModule):
@@ -63,6 +64,7 @@ class Class_maps(ResourceModule):
         """ Generate configuration commands to send based on
             want, have and desired state.
         """
+        syslog('keraklog: ' + str(self.have))
         wantd = {entry['name']: entry for entry in self.want}
         haved = {entry['name']: entry for entry in self.have}
 

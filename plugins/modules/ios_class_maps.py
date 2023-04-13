@@ -881,10 +881,10 @@ parsed:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.cisco.class_maps.plugins.module_utils.network.ios.argspec.class_maps.class_maps import (
+from ansible_collections.cisco.ios.plugins.module_utils.network.ios.argspec.class_maps.class_maps import (
     Class_mapsArgs,
 )
-from ansible_collections.cisco.class_maps.plugins.module_utils.network.ios.config.class_maps.class_maps import (
+from ansible_collections.cisco.ios.plugins.module_utils.network.ios.config.class_maps.class_maps import (
     Class_maps,
 )
 

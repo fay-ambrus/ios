@@ -26,25 +26,23 @@ class Class_mapsTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
-            "name": "key_a",
+            "name": "standard_class_map_names",
             "getval": re.compile(
-                r"""
-                ^key_a\s(?P<key_a>\S+)
+                r"""^class-map
+                    \s(type\s(?P<class_map_type>access-control|appnav|site-manager|stack|traffic))?
+                    \s(?P<match_type>match-any|match-all)
+                    \s*(?P<class_map_name>\S+)
                 $""", re.VERBOSE),
-            "setval": "",
             "result": {
+                "class_maps": {
+                    "{{ class_map_name|d() }}": {
+                        "name": "{{ class_map_name }}",
+                        "type": "{{ class_map_type }}",
+                        "match_type": "{{ match_type }}"
+                    }
+                }
             },
             "shared": True
-        },
-        {
-            "name": "key_b",
-            "getval": re.compile(
-                r"""
-                \s+key_b\s(?P<key_b>\S+)
-                $""", re.VERBOSE),
-            "setval": "",
-            "result": {
-            },
-        },
+        }, #todo: add separate entry for multicast group flows
     ]
     # fmt: on

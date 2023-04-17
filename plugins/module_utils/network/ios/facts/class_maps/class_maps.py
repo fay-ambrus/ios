@@ -58,8 +58,6 @@ class Class_mapsFacts(object):
 
         if not data:
             data = self.get_class_map_data(connection)
-        
-        syslog('kerak: ' + data)
 
         # parse native config using the Class_maps template
         class_maps_parser = Class_mapsTemplate(lines=data.splitlines(), module=self._module)

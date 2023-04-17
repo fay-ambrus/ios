@@ -26,23 +26,60 @@ class Class_mapsTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
-            "name": "standard_class_map_names",
+            "name": "standard class map names",
             "getval": re.compile(
                 r"""^class-map
-                    \s(type\s(?P<class_map_type>access-control|appnav|site-manager|stack|traffic))?
-                    \s(?P<match_type>match-any|match-all)
-                    \s*(?P<class_map_name>\S+)
-                $""", re.VERBOSE),
+                    \s(type\s(?P<class_map_type>access-control|appnav|site-manager|stack|traffic)\s)?
+                    (?P<match_type>match-any|match-all)
+                    \s(?P<class_map_name>\S+)
+                $""",
+                re.VERBOSE),
             "result": {
-                "class_maps": {
-                    "{{ class_map_name|d() }}": {
-                        "name": "{{ class_map_name }}",
-                        "type": "{{ class_map_type }}",
-                        "match_type": "{{ match_type }}"
-                    }
+                "{{ class_map_name|d() }}": {
+                    "name": "{{ class_map_name }}",
+                    "type": "{{ class_map_type }}",
+                    "match_type": "{{ match_type }}"
                 }
             },
             "shared": True
         }, #todo: add separate entry for multicast group flows
+        {
+            "name": "description",
+            "getval": re.compile(
+                r"""^\s*description
+                    \s(?P<description>.+)
+                $""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "class_map_decription": "{{ description }}"
+                }
+            },
+            "shared": True,
+        },
+        {
+            "name": "match access groups",
+            "getval": re.compile(
+                r"""^\s*match\saccess-group
+                    (\s(?P<negate>not))?
+                    \s((?P<number>\S+)|(name\s(?P<name>\S+)))
+                $""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "match": {
+                                "access_groups": {
+                                    "name": "{{ name }}",
+                                    "number": "{{ number }}",
+                                }
+                            },
+                        }
+                    ]
+                }
+            },
+            "shared": True,
+        }
     ]
     # fmt: on

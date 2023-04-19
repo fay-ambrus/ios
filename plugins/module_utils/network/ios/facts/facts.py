@@ -121,7 +121,7 @@ FACT_RESOURCE_SUBSETS = dict(
     ntp_global=Ntp_globalFacts,
     snmp_server=Snmp_serverFacts,
     hostname=HostnameFacts,
-    class_map=Class_mapsFacts,
+    class_maps=Class_mapsFacts,
 )
 
 

@@ -342,13 +342,34 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                 "webex-group",
                             ],
                         },
-                        "class_map_name": {
+                        "class_map": {"type": "str"},
+                        "cos": {
                             "type": "dict",
-                            "options": {"class_map_name": {"type": "str"}},
+                            "options": {
+                                "cos_0": {"type": "bool"},
+                                "cos_1": {"type": "bool"},
+                                "cos_2": {"type": "bool"},
+                                "cos_3": {"type": "bool"},
+                                "cos_4": {"type": "bool"},
+                                "cos_5": {"type": "bool"},
+                                "cos_6": {"type": "bool"},
+                                "cos_7": {"type": "bool"},
+                            },
                         },
-                        "cos": {"type": "list", "elements": "int"},
-                        "cos_inner": {"type": "list", "elements": "int"},
-                        "desination_address_mac": {"type": "str"},
+                        "cos_inner": {
+                            "type": "dict",
+                            "options": {
+                                "cos_inner_0": {"type": "bool"},
+                                "cos_inner_1": {"type": "bool"},
+                                "cos_inner_2": {"type": "bool"},
+                                "cos_inner_3": {"type": "bool"},
+                                "cos_inner_4": {"type": "bool"},
+                                "cos_inner_5": {"type": "bool"},
+                                "cos_inner_6": {"type": "bool"},
+                                "cos_inner_7": {"type": "bool"},
+                            },
+                        },
+                        "destination_mac_address": {"type": "str"},
                         "discard_class": {"type": "int"},
                         "object_group_security": {
                             "type": "dict",
@@ -440,7 +461,7 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                         "voaout",
                                     ],
                                 },
-                                "interface_nubmer": {
+                                "interface_number": {
                                     "type": "int",
                                     "required": True,
                                 },

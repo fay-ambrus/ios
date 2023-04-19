@@ -375,26 +375,72 @@ options:
                         - telepresence-group
                         - vmware-group
                         - webex-group
-                class_map_name:
-                    description: Use a traffic class as a match criterion.
-                    type: dict
-                    suboptions:
-                        class_map_name:
-                            description: The name of the traffic class to use as a match criterion.
-                            type: str
+                class_map:
+                    description:
+                        - Use a traffic class as a match criterion.
+                        - Creating circular class-maps is not allowed!
+                    type: str
                 cos:
                     description:
                         - Match a packet on the basis of a Layer 2 class of service (CoS)/Inter-Switch Link (ISL) marking
-                        - Up to 8  class-of-service values may be entered
-                    type: list
-                    elements: int
+                        - Up to 8 class-of-service values may be entered
+                    type: dict
+                    suboptions:
+                        cos_0:
+                            description: Determines if COS value 0 should be matched in this match.
+                            type: bool
+                        cos_1:
+                            description: Determines if COS value 1 should be matched in this match.
+                            type: bool
+                        cos_2:
+                            description: Determines if COS value 2 should be matched in this match.
+                            type: bool
+                        cos_3:
+                            description: Determines if COS value 3 should be matched in this match.
+                            type: bool
+                        cos_4:
+                            description: Determines if COS value 4 should be matched in this match.
+                            type: bool
+                        cos_5:
+                            description: Determines if COS value 5 should be matched in this match.
+                            type: bool
+                        cos_6:
+                            description: Determines if COS value 6 should be matched in this match.
+                            type: bool
+                        cos_7:
+                            description: Determines if COS value 7 should be matched in this match.
+                            type: bool
                 cos_inner:
                     description:
                         - Match the inner cos of QinQ packets on a Layer 2 class of service (CoS) marking
-                        - UP to 4 class-of-service values may be entered.
-                    type: list
-                    elements: int
-                desination_address_mac:
+                        - Up to 4 class-of-service values may be entered.
+                    type: dict
+                    suboptions:
+                        cos_inner_0:
+                            description: Determines if COS inner value 0 should be matched in this match.
+                            type: bool
+                        cos_inner_1:
+                            description: Determines if COS inner value 1 should be matched in this match.
+                            type: bool
+                        cos_inner_2:
+                            description: Determines if COS inner value 2 should be matched in this match.
+                            type: bool
+                        cos_inner_3:
+                            description: Determines if COS inner value 3 should be matched in this match.
+                            type: bool
+                        cos_inner_4:
+                            description: Determines if COS inner value 4 should be matched in this match.
+                            type: bool
+                        cos_inner_5:
+                            description: Determines if COS inner value 5 should be matched in this match.
+                            type: bool
+                        cos_inner_6:
+                            description: Determines if COS inner value 6 should be matched in this match.
+                            type: bool
+                        cos_inner_7:
+                            description: Determines if COS inner value 7 should be matched in this match.
+                            type: bool
+                destination_mac_address:
                     description:
                         - Use the destination MAC address as a match criterion
                         - address format -> 00:00:00:00:00:00
@@ -498,7 +544,7 @@ options:
                                 - voafilterout
                                 - voain
                                 - voaout
-                        interface_nubmer:
+                        interface_number:
                             description:
                                 - The number of the interface to match.
                                 - Refer to the manual for the correct range for each type of interface.

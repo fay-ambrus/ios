@@ -96,27 +96,6 @@ class Class_mapsTemplate(NetworkTemplate):
             }
         },
         {
-            "name": "match application name",
-            "getval": re.compile(
-                r"""^\s*match(\s(?P<negate>not))?
-                    \sapplication
-                    \s(?P<name>cisco-phone|citrix|h323|ip-camera|jabber|rtp|rtsp|sip|surveillance-distribution|telepresence-control|telepresence-data|telepresence-media|vmware-view|webex-meeting|wyze-zero-client|xmpp-client)\s*$
-                """,
-                re.VERBOSE),
-            "result": {
-               "{{ class_map_name|d() }}": {
-                    "matches": [
-                        {
-                            "application_name": {
-                                "{{ name }}": {}
-                            },
-                            "negate": "{{ not not negate }}"
-                        }
-                    ]
-                } 
-            }
-        },
-        {
             "name": "match application name regexp",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
@@ -142,6 +121,239 @@ class Class_mapsTemplate(NetworkTemplate):
                     ]
                 }
             }
-        }
+        },
+        {
+            "name": "match application attribute",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sapplication
+                    \sattribute
+                    \s(?P<attribute>category|device-class|media-type|sub-category|tcl)
+                    \s(?P<value>\S+)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "application_attribute": {
+                                "{{ attribute.replace('-', '_') }}": "{{ value }}"
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match application group",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sapplication
+                    \sapplication-group
+                    \s(?P<application_group>telepresence-group|vmware-group|webex-group)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "application_group": "{{ application_group }}",
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match class-map",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sclass-map
+                    \s(?P<class_map>\S+)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "class_map": "{{ class_map }}",
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match cos",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \scos
+                    \s* (?P<cos_val_0>\d)
+                    (\s*(?P<cos_val_1>\d))?
+                    (\s*(?P<cos_val_2>\d))?
+                    (\s*(?P<cos_val_3>\d))?
+                    (\s*(?P<cos_val_4>\d))?
+                    (\s*(?P<cos_val_5>\d))?
+                    (\s*(?P<cos_val_6>\d))?
+                    (\s*(?P<cos_val_7>\d))?
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "cos": {
+                                "{{ 'cos_' + cos_val_0 if cos_val_0 is defined else None }}": "{{ not not cos_val_0 }}",
+                                "{{ 'cos_' + cos_val_1 if cos_val_1 is defined else None }}": "{{ not not cos_val_1 }}",
+                                "{{ 'cos_' + cos_val_2 if cos_val_2 is defined else None }}": "{{ not not cos_val_2 }}",
+                                "{{ 'cos_' + cos_val_3 if cos_val_3 is defined else None }}": "{{ not not cos_val_3 }}",
+                                "{{ 'cos_' + cos_val_4 if cos_val_4 is defined else None }}": "{{ not not cos_val_4 }}",
+                                "{{ 'cos_' + cos_val_5 if cos_val_5 is defined else None }}": "{{ not not cos_val_5 }}",
+                                "{{ 'cos_' + cos_val_6 if cos_val_6 is defined else None }}": "{{ not not cos_val_6 }}",
+                                "{{ 'cos_' + cos_val_7 if cos_val_7 is defined else None }}": "{{ not not cos_val_7 }}",
+                            },  
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match cos inner",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \scos
+                    \sinner
+                    \s*(?P<cos_inner_val_0>\d)
+                    (\s*(?P<cos_inner_val_1>\d))?
+                    (\s*(?P<cos_inner_val_2>\d))?
+                    (\s*(?P<cos_inner_val_3>\d))?
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "cos_inner": {
+                                "{{ 'cos_inner_' + cos_inner_val_0 if cos_inner_val_0 is defined else None }}": "{{ not not cos_inner_val_0 }}",
+                                "{{ 'cos_inner_' + cos_inner_val_1 if cos_inner_val_1 is defined else None }}": "{{ not not cos_inner_val_1 }}",
+                                "{{ 'cos_inner_' + cos_inner_val_2 if cos_inner_val_2 is defined else None }}": "{{ not not cos_inner_val_2 }}",
+                                "{{ 'cos_inner_' + cos_inner_val_3 if cos_inner_val_3 is defined else None }}": "{{ not not cos_inner_val_3 }}",
+                            },  
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match destination mac",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sdestination-address
+                    \smac
+                    \s(?P<dest_mac>\S+)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "destination_mac_address": "{{ dest_mac.lower() }}",
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+        "name": "match discard class",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sdiscard-class
+                    \s(?P<discard_class>\d)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "discard_class": "{{ discard_class }}",
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+        "name": "match object-group security",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sgroup-object
+                    \ssecurity
+                    \s(?P<direction>destination|source)
+                    \s(?P<name>\S+)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "object_group_security": {
+                                "direction": "{{ direction }}",
+                                "name": "{{ name }}"
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+        "name": "match input-interface",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sinput-interface
+                    \s(?P<interface_name>\S+)(?P<interface_number>\d+)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "input_interface": {
+                                "interface_name": "{{ interface_name.lower() }}",
+                                "interface_number": "{{ interface_number }}"
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+        "name": "match ip dscp",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sip
+                    \s
+                    \s(?P<interface_name>\S+)(?P<interface_number>\d+)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "input_interface": {
+                                "interface_name": "{{ interface_name.lower() }}",
+                                "interface_number": "{{ interface_number }}"
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
     ]
     # fmt: on

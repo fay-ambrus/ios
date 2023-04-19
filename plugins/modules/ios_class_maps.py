@@ -142,15 +142,43 @@ options:
                         name_regexp:
                             description: Match all packets with applicaiton name matching the given regular expression.
                             type: str
-                        cisco-phone:
-                            description: Cisco IP Phones and PC-based Unified Communicators
+                        predefined_type:
+                            description: todo
                             type: dict
                             suboptions:
+                                name:
+                                    description: todo
+                                    type: str
+                                    choices:
+                                        - cisco-phone
+                                        - citrix
+                                        - h323
+                                        - ip-camera
+                                        - jabber
+                                        - rtp
+                                        - rtsp
+                                        - sip
+                                        - surveillance-distribution
+                                        - telepresence-control
+                                        - telepresence-data
+                                        - telepresence-media
+                                        - vmware-view
+                                        - webex-meeting
+                                        - wyze-zero-client
+                                        - xmpp-client
                                 traffic_type:
                                     description: Traffic Type
                                     type: str
                                     choices:
                                         - control
+                                        - background
+                                        - bulk
+                                        - desktop
+                                        - interactive
+                                        - realtime
+                                        - session
+                                        - streaming
+                                        - tunnel
                                 transport_type:
                                     description: Transport Type
                                     type: str
@@ -176,18 +204,6 @@ options:
                             description: Citrix Application
                             type: dict
                             suboptions:
-                                traffic_type:
-                                    description: Traffic Type
-                                    type: str
-                                    choices:
-                                        - background
-                                        - bulk
-                                        - desktop
-                                        - interactive
-                                        - realtime
-                                        - session
-                                        - streaming
-                                        - tunnel
                                 transport_type:
                                     description: Transport Type
                                     type: str

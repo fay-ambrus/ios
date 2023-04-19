@@ -32,7 +32,7 @@ class Class_mapsTemplate(NetworkTemplate):
                     \s(type\s(?P<class_map_type>access-control|appnav|site-manager|stack|traffic)\s)?
                     (?P<match_type>match-any|match-all)
                     \s(?P<class_map_name>\S+)
-                $""",
+                \s*$""",
                 re.VERBOSE),
             "result": {
                 "{{ class_map_name|d() }}": {
@@ -48,38 +48,100 @@ class Class_mapsTemplate(NetworkTemplate):
             "getval": re.compile(
                 r"""^\s*description
                     \s(?P<description>.+)
-                $""",
+                \s*$""",
                 re.VERBOSE),
             "result": {
                 "{{ class_map_name|d() }}": {
                     "class_map_decription": "{{ description }}"
                 }
             },
-            "shared": True,
         },
         {
             "name": "match access groups",
             "getval": re.compile(
-                r"""^\s*match\saccess-group
-                    (\s(?P<negate>not))?
+                r"""^\s*match(\s(?P<negate>not))?
+                    \saccess-group
                     \s((?P<number>\S+)|(name\s(?P<name>\S+)))
-                $""",
+                \s*$""",
                 re.VERBOSE),
             "result": {
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "match": {
-                                "access_groups": {
-                                    "name": "{{ name }}",
-                                    "number": "{{ number }}",
-                                }
+                            "access_groups": {
+                                "name": "{{ name }}",
+                                "number": "{{ number }}",
                             },
+                            "negate": "{{ not not negate }}"
                         }
                     ]
                 }
             },
-            "shared": True,
+        },
+        {
+            "name": "match any",
+            "getval": re.compile(
+                r"""^\s*match
+                    \sany
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "any": True,
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match application name",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sapplication
+                    \s(?P<name>cisco-phone|citrix|h323|ip-camera|jabber|rtp|rtsp|sip|surveillance-distribution|telepresence-control|telepresence-data|telepresence-media|vmware-view|webex-meeting|wyze-zero-client|xmpp-client)\s*$
+                """,
+                re.VERBOSE),
+            "result": {
+               "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "application_name": {
+                                "{{ name }}": {}
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                } 
+            }
+        },
+        {
+            "name": "match application name regexp",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sapplication
+                    \s(?P<regexp>\S+)
+                    (\ssource\s(?P<source>cli|cube|msp|nbar|rfmd|rsvp|cac))?
+                    (\svendor\s(?P<vendor>)\S+)?
+                    (\sversion\s(?P<version>\S+))?
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "application_name": {
+                                "name_regexp": "{{ regexp }}",
+                                "source": "{{ source }}",
+                                "vendor": "{{ vendor }}",
+                                "version": "{{ version }}",
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
         }
     ]
     # fmt: on

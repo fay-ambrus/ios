@@ -63,8 +63,6 @@ class Class_mapsFacts(object):
         class_maps_parser = Class_mapsTemplate(lines=data.splitlines(), module=self._module)
         objs = list(class_maps_parser.parse().values())
 
-        syslog('kerak: ' + str(objs))
-
         ansible_facts['ansible_network_resources'].pop('class_maps', None)
 
         params = utils.remove_empties(

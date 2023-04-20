@@ -69,7 +69,9 @@ class Class_mapsFacts(object):
             class_maps_parser.validate_config(self.argument_spec, {"config": objs}, redact=True)
         )
 
-        facts['class_maps'] = params['config']
+        if 'config' in params:
+            facts['class_maps'] = params['config']
+
         ansible_facts['ansible_network_resources'].update(facts)
 
         return ansible_facts

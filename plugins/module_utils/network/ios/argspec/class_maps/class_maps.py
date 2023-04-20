@@ -342,6 +342,10 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                 "webex-group",
                             ],
                         },
+                        "cac_status": {
+                            "type": "str",
+                            "choices": ["admitted", "un-admitted"],
+                        },
                         "class_map": {"type": "str"},
                         "cos": {
                             "type": "dict",
@@ -470,38 +474,10 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                         "ip_dscp": {
                             "type": "dict",
                             "options": {
-                                "dscp_values": {"type": "list", "elements": "int"},
-                                "dscp_af_values": {
-                                    "type": "dict",
-                                    "options": {
-                                        "af11": {"type": "bool"},
-                                        "af12": {"type": "bool"},
-                                        "af13": {"type": "bool"},
-                                        "af21": {"type": "bool"},
-                                        "af22": {"type": "bool"},
-                                        "af23": {"type": "bool"},
-                                        "af31": {"type": "bool"},
-                                        "af32": {"type": "bool"},
-                                        "af33": {"type": "bool"},
-                                        "af41": {"type": "bool"},
-                                        "af42": {"type": "bool"},
-                                        "af43": {"type": "bool"},
-                                    },
-                                },
-                                "dscp_cp_values": {
-                                    "type": "dict",
-                                    "options": {
-                                        "cs1": {"type": "bool"},
-                                        "cs2": {"type": "bool"},
-                                        "cs3": {"type": "bool"},
-                                        "cs4": {"type": "bool"},
-                                        "cs5": {"type": "bool"},
-                                        "cs6": {"type": "bool"},
-                                        "cs7": {"type": "bool"},
-                                    },
-                                },
-                                "default_value": {"type": "bool"},
-                                "ef_value": {"type": "bool"},
+                                "dscp_value_1": {"type": "str", "required": True},
+                                "dscp_value_2": {"type": "str", "required": True},
+                                "dscp_value_3": {"type": "str", "required": True},
+                                "dscp_value_4": {"type": "str", "required": True},
                             },
                         },
                         "ip_precedence": {"type": "list", "elements": "int"},
@@ -518,13 +494,16 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                         "metadata": {
                             "type": "dict",
                             "mutually_exclusive": [
-                                ["cac_status", "called_uri", "caller_uri"]
+                                [
+                                    "cac_status",
+                                    "called_uri",
+                                    "caller_uri",
+                                    "device_model",
+                                    "global_session_id",
+                                    "multi_party_session_id",
+                                ]
                             ],
                             "options": {
-                                "cac_status": {
-                                    "type": "str",
-                                    "choices": ["admitted", "un-admitted"],
-                                },
                                 "called_uri": {"type": "str"},
                                 "calling_uri": {"type": "str"},
                                 "device_model": {"type": "str"},
@@ -532,7 +511,10 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                 "multi_party_session_id": {"type": "str"},
                             },
                         },
-                        "mpls_experimental": {"type": "list", "elements": "int"},
+                        "mpls_experimental_topmost": {
+                            "type": "list",
+                            "elements": "int",
+                        },
                         "packet_length": {
                             "type": "dict",
                             "options": {
@@ -540,66 +522,39 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                 "min": {"type": "int"},
                             },
                         },
-                        "protocol": {"type": "str"},
-                        "protocol_nbar": {
+                        "protocol": {
                             "type": "dict",
                             "options": {
-                                "protocol_name": {"type": "str", "required": True},
-                                "variable_field_name": {"type": "str"},
-                                "value": {"type": "str"},
+                                "protocol_name": {"required": True, "type": "str"},
+                                "subprotocol_parameter": {
+                                    "required_together": [
+                                        [
+                                            "subprotocol_parameter_name",
+                                            "subprotocol_parameter_value",
+                                        ]
+                                    ],
+                                    "type": "dict",
+                                    "options": {
+                                        "subprotocol_parameter_name": {
+                                            "type": "str"
+                                        },
+                                        "subprotocol_parameter_value": {
+                                            "type": "str"
+                                        },
+                                    },
+                                },
                             },
                         },
                         "protocol_attribute": {
                             "type": "dict",
-                            "mutually_exclusive": [
-                                [
-                                    "application_family",
-                                    "application_group",
-                                    "application_set",
-                                    "business_relevance",
-                                    "category",
-                                    "encrypted",
-                                    "sub_category",
-                                    "traffic-class",
-                                    "tunnel",
-                                ]
-                            ],
                             "options": {
-                                "application_family": {"type": "str"},
-                                "application_group": {"type": "str"},
-                                "application_set": {"type": "str"},
-                                "business_relevance": {
+                                "attribute_name": {
+                                    "required": True,
                                     "type": "str",
-                                    "choices": [
-                                        "business-ireelevant",
-                                        "business-relevant",
-                                        "default",
-                                    ],
                                 },
-                                "category": {"type": "str"},
-                                "encrypted": {
+                                "attribute_value": {
+                                    "required": True,
                                     "type": "str",
-                                    "choices": [
-                                        "encrypted_yes",
-                                        "encrypted_no",
-                                        "encrypted_unassigneds",
-                                    ],
-                                },
-                                "sub_category": {"type": "str"},
-                                "traffic_class": {
-                                    "type": "str",
-                                    "choices": [
-                                        "broadcast-video",
-                                        "bulk-data",
-                                        "multimedia-conferencing",
-                                        "multimedia-streaming",
-                                        "network-control",
-                                        "ops-admin-mgmt",
-                                        "real-time-interactive",
-                                        "signaling",
-                                        "transactional-data",
-                                        "voip-telephony",
-                                    ],
                                 },
                             },
                         },

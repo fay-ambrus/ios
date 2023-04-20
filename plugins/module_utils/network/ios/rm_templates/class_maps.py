@@ -185,6 +185,26 @@ class Class_mapsTemplate(NetworkTemplate):
             }
         },
         {
+            "name": "match cac status",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \scac
+                    \sstatus
+                    \s(?P<cac_status>admitted|un-admitted)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "cac_status": "{{ cac_status }}",
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
             "name": "match cos",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
@@ -337,18 +357,307 @@ class Class_mapsTemplate(NetworkTemplate):
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
                     \sip
-                    \s
-                    \s(?P<interface_name>\S+)(?P<interface_number>\d+)
+                    \sdscp
+                    \s*(?P<dscp_value_1>(\d{1,2})|(af[1-4][1-3])|(cs[1-7])|default|ef)
+                    \s*(?P<dscp_value_2>(\d{1,2})|(af[1-4][1-3])|(cs[1-7])|default|ef)?
+                    \s*(?P<dscp_value_3>(\d{1,2})|(af[1-4][1-3])|(cs[1-7])|default|ef)?
+                    \s*(?P<dscp_value_4>(\d{1,2})|(af[1-4][1-3])|(cs[1-7])|default|ef)?
                 \s*$""",
                 re.VERBOSE),
             "result": {
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "input_interface": {
-                                "interface_name": "{{ interface_name.lower() }}",
-                                "interface_number": "{{ interface_number }}"
+                            "ip_dscp": {
+                                "dscp_value_1": "{{ dscp_value_1 }}",
+                                "dscp_value_2": "{{ dscp_value_2 }}",
+                                "dscp_value_3": "{{ dscp_value_3 }}",
+                                "dscp_value_4": "{{ dscp_value_4 }}"
                             },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        # todo ip precedence
+        {
+            "name": "match ip rtp",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sip
+                    \srtp
+                    \s(?P<starting_port_number>\d{4,5})
+                    \s(?P<port_range>\d{1,5})
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "ip_rtp": {
+                                "starting_port_number": "{{ starting_port_number }}",
+                                "port_range": "{{ port_range }}",
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match metadata",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \smetadata
+                    \s(?P<metadata_type>(cac\sstatus)|(called-uri)|(calling-uri)|(device-model)|(global-session-id)|(multi-party-session-id))
+                    \s(?P<metadata_value>\S+)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "metadata": {
+                                "{{ metadata_type.replace('-', '_').replace(' ', '_') }}": "{{ metadata_value }}",
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match mpls experimental",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \smetadata
+                    \s(?P<metadata_type>(cac\sstatus)|(called-uri)|(calling-uri)|(device-model)|(global-session-id)|(multi-party-session-id))
+                    \s(?P<metadata_value>\S+)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "metadata": {
+                                "{{ metadata_type.replace('-', '_').replace(' ', '_') }}": "{{ metadata_value }}",
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        # todo mpls_experimental_topmost
+        {
+            "name": "match packet length",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \spacket
+                    \slength
+                    ((\smin\s(?P<min>\d{1,4}))|(\smax\s(?P<max>\d{1,4}))){1,2}
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "packet_length": {
+                                "min": "{{ min }}",
+                                "max": "{{ max }}",
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match protocol attribute",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sprotocol
+                    \sattribute
+                    \s(?P<attribute_name>\S+)
+                    \s(?P<attribute_value>\S+)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "protocol_attribute": {
+                                "attribute_name": "{{ attribute_name }}",
+                                "attribute_value":  "{{ attribute_value }}"
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match protocol",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sprotocol
+                    \s(?P<protocol_name>\S+)
+                    (\s(?P<subprotocol_parameter_name>\S+)
+                    \s"(?P<subprotocol_parameter_value>.+)")?
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "protocol": {
+                                "protocol_name": "{{ protocol_name }}",
+                                "subprotocol_parameter":  {
+                                    "subprotocol_parameter_name": "{{ subprotocol_parameter_name }}",
+                                    "subprotocol_parameter_value": "{{ subprotocol_parameter_value }}"
+                                }
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match qos group",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sqos-group
+                    \s(?P<qos_group_num>\d{1,2})
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "qos_group": "{{ qos_group_num }}",
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match security group",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \ssecurity-group
+                    \s(?P<direciton>(destination tag)|(source tag))
+                    \s(?P<num>\d{1,5})
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "security_group": {
+                                "{{ direction.replace(' ', '_') }}": "{{ num }}"
+                            },
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+                {
+            "name": "match source mac",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \ssource-address
+                    \smac
+                    \s(?P<source_mac>\S+)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "source_mac_address": "{{ source_mac.lower() }}",
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match destination mac",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sdestination-address
+                    \smac
+                    \s(?P<dest_mac>\S+)
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "destination_mac_address": "{{ dest_mac.lower() }}",
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match vlan",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \svlan
+                    \s(?P<id>\d{1,4})
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "vlan_id": "{{ id }}",
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match traffic category",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \svlan
+                    \sinner
+                    \s(?P<id>\d{1,4})
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "vlan_id_inner": "{{ id }}",
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match vlan inner",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \svlan
+                    \sinner
+                    \s(?P<id>\d{1,4})
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "vlan_id_inner": "{{ id }}",
                             "negate": "{{ not not negate }}"
                         }
                     ]

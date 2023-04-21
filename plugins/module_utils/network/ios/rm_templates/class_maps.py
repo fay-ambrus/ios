@@ -548,7 +548,7 @@ class Class_mapsTemplate(NetworkTemplate):
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
                     \ssecurity-group
-                    \s(?P<direciton>(destination tag)|(source tag))
+                    \s(?P<direction>(destination\stag)|(source\stag))
                     \s(?P<num>\d{1,5})
                 \s*$""",
                 re.VERBOSE),
@@ -610,7 +610,7 @@ class Class_mapsTemplate(NetworkTemplate):
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
                     \svlan
-                    \s(?P<id>\d{1,4})
+                    \s*(?P<id>\d{1,4})
                 \s*$""",
                 re.VERBOSE),
             "result": {
@@ -628,16 +628,15 @@ class Class_mapsTemplate(NetworkTemplate):
             "name": "match traffic category",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
-                    \svlan
-                    \sinner
-                    \s(?P<id>\d{1,4})
+                    \straffic-category
+                    \s(?P<traffic_category>allow|optimize)
                 \s*$""",
                 re.VERBOSE),
             "result": {
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "vlan_id_inner": "{{ id }}",
+                            "traffic_category": "{{ traffic_category }}",
                             "negate": "{{ not not negate }}"
                         }
                     ]
@@ -650,7 +649,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 r"""^\s*match(\s(?P<negate>not))?
                     \svlan
                     \sinner
-                    \s(?P<id>\d{1,4})
+                    \s*(?P<id>\d{1,4})
                 \s*$""",
                 re.VERBOSE),
             "result": {

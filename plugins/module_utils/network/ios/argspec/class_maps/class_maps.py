@@ -35,16 +35,18 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
         "config": {
             "type": "list",
             "elements": "dict",
+            "mutually_exclusive": [[]],
             "options": {
                 "name": {"required": True, "type": "str"},
                 "match_type": {
                     "default": "match-all",
                     "type": "str",
-                    "choices": ["match-all", "match-any"],
+                    "choices": ["match-all", "match-any", "match-none"],
                 },
+                "class_map_decription": {"type": "str"},
                 "class_map_type": {
-                    "default": "inspect",
                     "type": "str",
+                    "default": "standard",
                     "choices": [
                         "access-control",
                         "appnav",
@@ -53,10 +55,10 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                         "multicast-flows",
                         "site-manager",
                         "stack",
+                        "standard",
                         "traffic",
                     ],
                 },
-                "class_map_decription": {"type": "str"},
                 "matches": {
                     "type": "list",
                     "elements": "dict",
@@ -375,6 +377,7 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                         },
                         "destination_mac_address": {"type": "str"},
                         "discard_class": {"type": "int"},
+                        "field": {"type": "str"},
                         "object_group_security": {
                             "type": "dict",
                             "options": {
@@ -570,6 +573,39 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                             },
                         },
                         "source_mac_address": {"type": "str"},
+                        "start": {
+                            "type": "dict",
+                            "mutually_exclusive": [
+                                ["eq", "neq", "gt", "lt", "range", "regex"]
+                            ],
+                            "options": {
+                                "layer": {
+                                    "type": "str",
+                                    "required": True,
+                                    "choices": ["l2", "l3"],
+                                },
+                                "offset": {"type": "int", "required": True},
+                                "size": {"type": "int", "required": True},
+                                "eq": {
+                                    "type": "dict",
+                                    "options": {
+                                        "value": {"type": "int", "required": True},
+                                        "mask": {"type": "int"},
+                                    },
+                                },
+                                "neq": {
+                                    "type": "dict",
+                                    "options": {
+                                        "value": {"type": "int", "required": True},
+                                        "mask": {"type": "int"},
+                                    },
+                                },
+                                "gt": {"type": "int"},
+                                "lt": {"type": "int"},
+                                "range": {"type": "dict"},
+                                "regex": {"type": "str"},
+                            },
+                        },
                         "traffic_category": {
                             "type": "str",
                             "choices": ["allow", "optimize"],

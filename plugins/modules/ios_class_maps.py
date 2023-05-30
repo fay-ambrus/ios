@@ -28,6 +28,7 @@ options:
     description: A list of class-maps represented as dictionaries.
     type: list
     elements: dict
+    mutually_exclusive: [[]] # todo
     suboptions:
         name:
             description:
@@ -45,12 +46,14 @@ options:
             choices:
                 - match-all
                 - match-any
-        class_map_type:
-            description:
-                - Determines the type of the class map.
-                - For more informtion on different Class-Map types, refer to the manual.
-            default: inspect
+                - match-none
+        class_map_decription:
+            description: Comment or a description that is added to the class map.
             type: str
+        class_map_type:
+            description: The type of the class-map
+            type: str
+            default: standard
             choices:
                 - access-control
                 - appnav
@@ -59,10 +62,8 @@ options:
                 - multicast-flows
                 - site-manager
                 - stack
+                - standard
                 - traffic
-        class_map_decription:
-            description: Comment or a description that is added to the class map.
-            type: str
         matches:
             description: A list of classification criteria.
             type: list
@@ -471,6 +472,9 @@ options:
                         - Number of the discard class being matched.
                         - Valid values are 0 to 7.
                     type: int
+                field:
+                    description: todo
+                    type: str
                 object_group_security:
                     description: Match traffic coming from, or going to a specified obejct-group.
                     type: dict
@@ -716,6 +720,85 @@ options:
                 source_mac_address:
                     description: Use the source MAC address as a match criterion
                     type: str
+                start:
+                    description: Configure match criteria on the basis of the datagram header (Layer 2 ) or the network header (Layer 3).
+                    type: dict
+                    mutually_exclusive: [[eq, neq, gt, lt, range, regex]]
+                    suboptions:
+                        layer:
+                            description: Determines the layer which the criterion will start from.
+                            type: str
+                            required: true
+                            choices:
+                                - l2
+                                - l3
+                        offset:
+                            description:
+                                - Match criterion can be made according to any aribitrary offset.
+                                - Valid values 0-255
+                            type: int
+                            required: true
+                        size:
+                            description:
+                                - The number of bytes to match on
+                                - Valid values 1-32
+                            type: int
+                            required: true
+                        eq:
+                            description: Match criteria is met if the packet is equal to the specified value or mask.
+                            type: dict
+                            suboptions:
+                                value:
+                                    description:
+                                        - Value for which the packet must be in accordance with.
+                                        - Valid range is 0-255
+                                    type: int
+                                    required: true
+                                mask:
+                                    description:
+                                        - Mask value
+                                        - Valid range is 0-255
+                                    type: int
+                        neq:
+                            description: Match criteria is met if the packet is not equal to the specified value or mask.
+                            type: dict
+                            suboptions:
+                                value:
+                                    description:
+                                        - Value for which the packet must be in accordance with.
+                                        - Valid range is 0-255
+                                    type: int
+                                    required: true
+                                mask:
+                                    description:
+                                        - Mask value
+                                        - Valid range is 0-255
+                                    type: int
+                        gt:
+                            description:
+                                - Match criteria is met if the packet is greater than the specified value.
+                                - Valid range is 0-255
+                            type: int
+                        lt:
+                            description:
+                                - Match criteria is met if the packet is less than the specified value.
+                                - Valid range is 0-255
+                            type: int
+                        range:
+                            description: Match critera is based upon a lower and upper boundary protocol field range.
+                            type: dict
+                            suboption:
+                                lower_boundary:
+                                    description: Acceptable range is 0-255
+                                    type: int
+                                    required: true
+                                upper_boundary:
+                                    description: Acceptable range is 0-255
+                                    type: int
+                                    required: true
+                        regex:
+                            description: Match critera is based upon a string that is to be matched.
+                            type: str
                 traffic_category:
                     description: 
                     type: str

@@ -26,20 +26,20 @@ class Class_mapsTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
-            "name": "standard class map names",
+            "name": "class map names",
             "getval": re.compile(
                 r"""^class-map
                     \s(type\s(?P<class_map_type>access-control|appnav|site-manager|stack|traffic)\s)?
-                    (?P<match_type>match-any|match-all)
+                    (?P<match_type>match-any|match-all|match-none)
                     \s(?P<class_map_name>\S+)
                 \s*$""",
                 re.VERBOSE),
             "result": {
                 "{{ class_map_name|d() }}": {
-                    "name": "{{ class_map_name }}",
-                    "type": "{{ class_map_type }}",
-                    "match_type": "{{ match_type }}"
-                }
+                        "class_map_type": "{{ class_map_type }}",
+                        "name": "{{ class_map_name }}",
+                        "match_type": "{{ match_type }}"
+                    }
             },
             "shared": True
         }, #todo: add separate entry for multicast group flows
@@ -501,9 +501,9 @@ class Class_mapsTemplate(NetworkTemplate):
             "name": "match protocol",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
-                    \sprotocol
+                    \s(protocol|nbar-protocol)
                     \s(?P<protocol_name>\S+)
-                    (\s(?P<subprotocol_parameter_name>\S+)
+                    (\s(?P<subprotocol_parameter_name>\S+)?
                     \s"(?P<subprotocol_parameter_value>.+)")?
                 \s*$""",
                 re.VERBOSE),
@@ -565,7 +565,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             }
         },
-                {
+        {
             "name": "match source mac",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
@@ -580,6 +580,40 @@ class Class_mapsTemplate(NetworkTemplate):
                         {
                             "source_mac_address": "{{ source_mac.lower() }}",
                             "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match start eq or neq",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sstart
+                    \s(?P<layer>l2|l3)-start
+                    \soffset
+                    \s(?P<offset>\d{1,3})
+                    \ssize
+                    \s(?P<size>\d{1,2})
+                    \s(?P<eq_type>eq|neq)
+                    \s(?P<value>\S+)
+                    (\smask
+                    \s(?P<mask>\S+))?
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "start": {
+                                "layer": "{{ layer }}",
+                                "offset": "{{ offset }}",
+                                "size": "{{ size }}",
+                                "{{ eq_type }}": {
+                                    "value": "{{ value }}",
+                                    "mask": "{{ mask }}"
+                                }
+                            }
                         }
                     ]
                 }

@@ -65,6 +65,15 @@ class Class_mapsFacts(object):
 
         ansible_facts['ansible_network_resources'].pop('class_maps', None)
 
+        for class_map in objs:
+            if class_map.get("matches"):
+                matches = class_map.get("matches")
+                for match in matches:
+                    if match.get("start"):
+                        start = match.get("start")
+                        if start.get("mask"):
+                            start["mask"] = int(start["mask"])
+
         params = utils.remove_empties(
             class_maps_parser.validate_config(self.argument_spec, {"config": objs}, redact=True)
         )

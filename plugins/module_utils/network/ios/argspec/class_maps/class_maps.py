@@ -35,35 +35,24 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
         "config": {
             "type": "list",
             "elements": "dict",
-            "mutually_exclusive": [[]],
             "options": {
                 "name": {"required": True, "type": "str"},
                 "match_type": {
                     "default": "match-all",
                     "type": "str",
-                    "choices": ["match-all", "match-any", "match-none"],
+                    "choices": ["match-all", "match-any"],
                 },
-                "class_map_decription": {"type": "str"},
-                "class_map_type": {
+                "description": {"type": "str"},
+                "class_type": {
                     "type": "str",
                     "default": "standard",
-                    "choices": [
-                        "access-control",
-                        "appnav",
-                        "control",
-                        "inspect",
-                        "multicast-flows",
-                        "site-manager",
-                        "stack",
-                        "standard",
-                        "traffic",
-                    ],
+                    "choices": ["access-control", "stack", "standard"],
                 },
                 "matches": {
                     "type": "list",
                     "elements": "dict",
                     "options": {
-                        "access_groups": {
+                        "access_group": {
                             "type": "dict",
                             "mutually_exclusive": [["name", "number"]],
                             "options": {
@@ -72,8 +61,40 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                             },
                         },
                         "any": {"type": "bool"},
+                        "application": {
+                            "type": "dict",
+                            "mutually_exclusive": [
+                                ["source", "vendor", "version"]
+                            ],
+                            "options": {
+                                "name": {"type": "str", "required": True},
+                                "source": {
+                                    "type": "str",
+                                    "choices": [
+                                        "cli",
+                                        "cube",
+                                        "msp",
+                                        "nbar",
+                                        "rfmd",
+                                        "rsvp",
+                                        "cac",
+                                    ],
+                                },
+                                "vendor": {"type": "str"},
+                                "version": {"type": "str"},
+                            },
+                        },
                         "application_attribute": {
                             "type": "dict",
+                            "mutually_exclusive": [
+                                [
+                                    "category",
+                                    "device_class",
+                                    "media_type",
+                                    "sub_category",
+                                    "tcl",
+                                ]
+                            ],
                             "options": {
                                 "category": {
                                     "type": "str",
@@ -116,226 +137,6 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                 "tcl": {"type": "str"},
                             },
                         },
-                        "application_name": {
-                            "type": "dict",
-                            "mutually_exclusive": [
-                                ["source", "vendor", "version"],
-                                ["name_regexp", "name"],
-                            ],
-                            "options": {
-                                "name_regexp": {"type": "str"},
-                                "predefined_type": {
-                                    "type": "dict",
-                                    "options": {
-                                        "name": {
-                                            "type": "str",
-                                            "choices": [
-                                                "cisco-phone",
-                                                "citrix",
-                                                "h323",
-                                                "ip-camera",
-                                                "jabber",
-                                                "rtp",
-                                                "rtsp",
-                                                "sip",
-                                                "surveillance-distribution",
-                                                "telepresence-control",
-                                                "telepresence-data",
-                                                "telepresence-media",
-                                                "vmware-view",
-                                                "webex-meeting",
-                                                "wyze-zero-client",
-                                                "xmpp-client",
-                                            ],
-                                        },
-                                        "traffic_type": {
-                                            "type": "str",
-                                            "choices": [
-                                                "control",
-                                                "background",
-                                                "bulk",
-                                                "desktop",
-                                                "interactive",
-                                                "realtime",
-                                                "session",
-                                                "streaming",
-                                                "tunnel",
-                                            ],
-                                        },
-                                        "transport_type": {
-                                            "type": "str",
-                                            "choices": ["rtcp", "rtp"],
-                                        },
-                                        "multiplex_type": {
-                                            "type": "str",
-                                            "choices": ["set", "unset"],
-                                        },
-                                        "signaling_type": {
-                                            "type": "str",
-                                            "choices": [
-                                                "bfcp",
-                                                "h323",
-                                                "mgcp",
-                                                "sip",
-                                                "skinny",
-                                            ],
-                                        },
-                                    },
-                                },
-                                "citrix": {
-                                    "type": "dict",
-                                    "options": {
-                                        "transport_type": {
-                                            "type": "str",
-                                            "choices": ["ica", "rdp"],
-                                        }
-                                    },
-                                },
-                                "h323": {"type": "bool"},
-                                "ip-camera": {
-                                    "type": "dict",
-                                    "options": {
-                                        "traffic_type": {
-                                            "type": "str",
-                                            "choices": ["realtime"],
-                                        },
-                                        "transport_type": {
-                                            "type": "str",
-                                            "choices": ["rtp"],
-                                        },
-                                        "multiplex_type": {
-                                            "type": "str",
-                                            "choices": ["set", "unset"],
-                                        },
-                                        "signaling_type": {
-                                            "type": "str",
-                                            "choices": ["rtsp"],
-                                        },
-                                    },
-                                },
-                                "jabber": {"type": "bool"},
-                                "rtp": {"type": "bool"},
-                                "rtsp": {"type": "bool"},
-                                "sip": {"type": "bool"},
-                                "surveillance-distribution": {
-                                    "type": "dict",
-                                    "options": {
-                                        "traffic_type": {
-                                            "type": "str",
-                                            "choices": ["realtime", "streaming"],
-                                        },
-                                        "transport_type": {
-                                            "type": "str",
-                                            "choices": ["rtp"],
-                                        },
-                                        "multiplex_type": {
-                                            "type": "str",
-                                            "choices": ["set", "unset"],
-                                        },
-                                        "signaling_type": {
-                                            "type": "str",
-                                            "choices": ["rtsp"],
-                                        },
-                                    },
-                                },
-                                "telepresence-control": {
-                                    "type": "dict",
-                                    "options": {
-                                        "signaling_type": {
-                                            "type": "str",
-                                            "choices": [
-                                                "bfcp",
-                                                "ccp",
-                                                "clue",
-                                                "h323",
-                                                "mscp",
-                                                "sip",
-                                                "xccp",
-                                            ],
-                                        }
-                                    },
-                                },
-                                "telepresence-data": {"type": "bool"},
-                                "telepresence-media": {
-                                    "type": "dict",
-                                    "options": {
-                                        "traffic_type": {
-                                            "type": "str",
-                                            "choices": ["control"],
-                                        },
-                                        "transport_type": {
-                                            "type": "str",
-                                            "choices": ["rtcp", "rtp"],
-                                        },
-                                        "multiplex_type": {
-                                            "type": "str",
-                                            "choices": ["set", "unset"],
-                                        },
-                                    },
-                                },
-                                "vmware-view": {
-                                    "type": "dict",
-                                    "options": {
-                                        "traffic_type": {
-                                            "type": "str",
-                                            "choices": [
-                                                "desktop",
-                                                "desktop-feedback",
-                                                "session",
-                                                "streaming",
-                                                "tunnel",
-                                                "usb-redirection",
-                                            ],
-                                        },
-                                        "transport_type": {
-                                            "type": "str",
-                                            "choices": ["pcoip", "rdp"],
-                                        },
-                                    },
-                                },
-                                "webex-meeting": {
-                                    "type": "dict",
-                                    "options": {
-                                        "traffic_type": {
-                                            "type": "str",
-                                            "choices": [
-                                                "control",
-                                                "sharing",
-                                                "streaming",
-                                            ],
-                                        },
-                                        "transport_type": {
-                                            "type": "str",
-                                            "choices": ["http"],
-                                        },
-                                    },
-                                },
-                                "wyze-zero-client": {
-                                    "type": "dict",
-                                    "options": {
-                                        "traffic_type": {
-                                            "type": "str",
-                                            "choices": ["streaming"],
-                                        }
-                                    },
-                                },
-                                "xmpp-client": {"type": "bool"},
-                                "source": {
-                                    "type": "str",
-                                    "choices": [
-                                        "cli",
-                                        "cube",
-                                        "msp",
-                                        "nbar",
-                                        "rfmd",
-                                        "rsvp",
-                                        "cac",
-                                    ],
-                                },
-                                "vendor": {"type": "str"},
-                                "version": {"type": "str"},
-                            },
-                        },
                         "application_group": {
                             "type": "str",
                             "choices": [
@@ -349,39 +150,29 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                             "choices": ["admitted", "un-admitted"],
                         },
                         "class_map": {"type": "str"},
-                        "cos": {
-                            "type": "dict",
-                            "options": {
-                                "cos_0": {"type": "bool"},
-                                "cos_1": {"type": "bool"},
-                                "cos_2": {"type": "bool"},
-                                "cos_3": {"type": "bool"},
-                                "cos_4": {"type": "bool"},
-                                "cos_5": {"type": "bool"},
-                                "cos_6": {"type": "bool"},
-                                "cos_7": {"type": "bool"},
-                            },
-                        },
-                        "cos_inner": {
-                            "type": "dict",
-                            "options": {
-                                "cos_inner_0": {"type": "bool"},
-                                "cos_inner_1": {"type": "bool"},
-                                "cos_inner_2": {"type": "bool"},
-                                "cos_inner_3": {"type": "bool"},
-                                "cos_inner_4": {"type": "bool"},
-                                "cos_inner_5": {"type": "bool"},
-                                "cos_inner_6": {"type": "bool"},
-                                "cos_inner_7": {"type": "bool"},
-                            },
-                        },
+                        "cos": {"type": "list", "elements": "int"},
+                        "cos_inner": {"type": "list", "elements": "int"},
                         "destination_mac_address": {"type": "str"},
                         "discard_class": {"type": "int"},
-                        "field": {"type": "str"},
+                        "dscp": {
+                            "type": "dict",
+                            "options": {
+                                "dscp_values": {
+                                    "type": "list",
+                                    "required": True,
+                                    "elements": "int",
+                                },
+                                "ip_versions": {
+                                    "type": "str",
+                                    "default": "IPv4-and-IPv6",
+                                    "choices": ["IPv4-and-IPv6", "IPv4"],
+                                },
+                            },
+                        },
                         "object_group_security": {
                             "type": "dict",
                             "options": {
-                                "direction": {
+                                "endpoint": {
                                     "type": "str",
                                     "required": True,
                                     "choices": ["destination", "source"],
@@ -472,15 +263,6 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                     "type": "int",
                                     "required": True,
                                 },
-                            },
-                        },
-                        "ip_dscp": {
-                            "type": "dict",
-                            "options": {
-                                "dscp_value_1": {"type": "str", "required": True},
-                                "dscp_value_2": {"type": "str", "required": True},
-                                "dscp_value_3": {"type": "str", "required": True},
-                                "dscp_value_4": {"type": "str", "required": True},
                             },
                         },
                         "ip_precedence": {"type": "list", "elements": "int"},

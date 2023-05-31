@@ -28,12 +28,11 @@ options:
     description: A list of class-maps represented as dictionaries.
     type: list
     elements: dict
-    mutually_exclusive: [[]] # todo
     suboptions:
         name:
             description:
                 - Name of the class for the class map.
-                - The name must be surrounded with quotation marks, if it contains spaces.
+                - The class name is used for both the class map and to configure a policy for the class in the policy map.
             required: true
             type: str
         match_type:
@@ -46,33 +45,32 @@ options:
             choices:
                 - match-all
                 - match-any
-                - match-none
-        class_map_decription:
-            description: Comment or a description that is added to the class map.
+        description:
+            description:
+                - Comment or a description that is added to the class map.
+                - The character-string cannot exceed 161 characters.
             type: str
-        class_map_type:
-            description: The type of the class-map
+        class_type:
+            description:
+                - Specifies the class-map type.
+                - This Ansible module at this moment only support class-maps of types access-control, stack and standard, with plans to add support for other types at a later stages.
+                - Please note, that certain matching criteria might be only available in a specific type of class-map.
+                - To check, wheter the matching criterion you want to use is available in a certain class-map type, check the matching criterion description, or refer to your manual.
             type: str
             default: standard
             choices:
                 - access-control
-                - appnav
-                - control
-                - inspect
-                - multicast-flows
-                - site-manager
                 - stack
                 - standard
-                - traffic
         matches:
             description: A list of classification criteria.
             type: list
             elements: dict
             suboptions:
-                access_groups:
+                access_group:
                     description:
-                        - Access-groups to match.
-                        - Identified by a name or number.
+                        - Specifies match criteria for a class map on the basis of the specified access control list (ACL).
+                        - Only available in standard class-maps.
                     type: dict
                     mutually_exclusive: [[name, number]]
                     suboptions:
@@ -87,283 +85,21 @@ options:
                                 - The range is from 1 to 2699.
                             type: int
                 any:
-                    description: Configures the match criteria to be successful for all packets.
+                    description:
+                        - Configures the match criteria to be successful for all packets.
+                        - Only available in standard class-maps.
                     type: bool
-                application_attribute:
-                    description: Specifies the relevant application metadata attribute to match.
+                application:
+                    description:
+                        - Match Medianet Flow traffic based on application name, source, vendor and version.
+                        - Only available in standard class-maps.
                     type: dict
+                    mutually_exclusive: [[source, vendor, version]]
                     suboptions:
-                        category:
-                            description:
-                                - Specifies the category type that the control plane classification engine must match.
+                        name:
+                            description: Name of the application that the control plane classification engine must match.
                             type: str
-                            choices:
-                                - business-and-productivity-tools
-                                - physical-security
-                                - voice-and-video
-                        device_class:
-                            description:
-                                - Specifies the device class to match.
-                            type: str
-                            choices:
-                                - desktop-conferencing
-                                - desktop-virtualization
-                                - physical-phone
-                                - room-conferencing
-                                - software-phone
-                                - surveillance
-                        media_type:
-                            description:
-                                - Specifies the type of media to match.
-                            type: str
-                            choices:
-                                - audio
-                                - audio-video
-                                - control
-                                - data
-                                - video
-                        sub_category:
-                            description:
-                                - Specifies the subcategory to match.
-                            type: str
-                            choices:
-                                - control-and-signaling
-                                - remote-access-terminal
-                                - video-surveillance
-                                - voice-video-chat-collaboration
-                        tcl:
-                            description:
-                                - Traffic Class Label to match.
-                            type: str
-                application_name:
-                    description: Use name, source, vendor and version from application metadata as match criterion for classification.
-                    type: dict
-                    mutually_exclusive: [[source, vendor, version], [name_regexp, name]]
-                    suboptions:
-                        name_regexp:
-                            description: Match all packets with applicaiton name matching the given regular expression.
-                            type: str
-                        predefined_type:
-                            description: todo
-                            type: dict
-                            suboptions:
-                                name:
-                                    description: todo
-                                    type: str
-                                    choices:
-                                        - cisco-phone
-                                        - citrix
-                                        - h323
-                                        - ip-camera
-                                        - jabber
-                                        - rtp
-                                        - rtsp
-                                        - sip
-                                        - surveillance-distribution
-                                        - telepresence-control
-                                        - telepresence-data
-                                        - telepresence-media
-                                        - vmware-view
-                                        - webex-meeting
-                                        - wyze-zero-client
-                                        - xmpp-client
-                                traffic_type:
-                                    description: Traffic Type
-                                    type: str
-                                    choices:
-                                        - control
-                                        - background
-                                        - bulk
-                                        - desktop
-                                        - interactive
-                                        - realtime
-                                        - session
-                                        - streaming
-                                        - tunnel
-                                transport_type:
-                                    description: Transport Type
-                                    type: str
-                                    choices:
-                                        - rtcp
-                                        - rtp
-                                multiplex_type:
-                                    description: Multiplex Type
-                                    type: str
-                                    choices:
-                                        - set
-                                        - unset
-                                signaling_type:
-                                    description: Signaling Type
-                                    type: str
-                                    choices:
-                                        - bfcp
-                                        - h323
-                                        - mgcp
-                                        - sip
-                                        - skinny
-                        citrix:
-                            description: Citrix Application
-                            type: dict
-                            suboptions:
-                                transport_type:
-                                    description: Transport Type
-                                    type: str
-                                    choices:
-                                        - ica
-                                        - rdp
-                        h323:
-                            description:
-                            type: bool
-                        ip-camera:
-                            description:
-                            type: dict
-                            suboptions:
-                                traffic_type:
-                                    description: Traffic Type
-                                    type: str
-                                    choices:
-                                        - realtime
-                                transport_type:
-                                    description: Transport Type
-                                    type: str
-                                    choices:
-                                        - rtp
-                                multiplex_type:
-                                    description: Multiplex Type
-                                    type: str
-                                    choices:
-                                        - set
-                                        - unset
-                                signaling_type:
-                                    description: Signaling Type
-                                    type: str
-                                    choices:
-                                        - rtsp
-                        jabber:
-                            description:
-                            type: bool
-                        rtp:
-                            description:
-                            type: bool
-                        rtsp:
-                            description:
-                            type: bool
-                        sip:
-                            description:
-                            type: bool
-                        surveillance-distribution:
-                            description:
-                            type: dict
-                            suboptions:
-                                traffic_type:
-                                    description: Traffic Type
-                                    type: str
-                                    choices:
-                                        - realtime
-                                        - streaming
-                                transport_type:
-                                    description: Transport Type
-                                    type: str
-                                    choices:
-                                        - rtp
-                                multiplex_type:
-                                    description: Multiplex Type
-                                    type: str
-                                    choices:
-                                        - set
-                                        - unset
-                                signaling_type:
-                                    description: Signaling Type
-                                    type: str
-                                    choices:
-                                        - rtsp
-                        telepresence-control:
-                            description:
-                            type: dict
-                            suboptions:
-                                signaling_type:
-                                    description: Signaling Type
-                                    type: str
-                                    choices:
-                                        - bfcp
-                                        - ccp
-                                        - clue
-                                        - h323
-                                        - mscp
-                                        - sip
-                                        - xccp
-                        telepresence-data:
-                            description:
-                            type: bool
-                        telepresence-media:
-                            description:
-                            type: dict
-                            suboptions:
-                                traffic_type:
-                                    description: Traffic Type
-                                    type: str
-                                    choices:
-                                        - control
-                                transport_type:
-                                    description: Transport Type
-                                    type: str
-                                    choices:
-                                        - rtcp
-                                        - rtp
-                                multiplex_type:
-                                    description: Multiplex Type
-                                    type: str
-                                    choices:
-                                        - set
-                                        - unset
-                        vmware-view:
-                            description:
-                            type: dict
-                            suboptions:
-                                traffic_type:
-                                    description: Traffic Type
-                                    type: str
-                                    choices:
-                                        - desktop
-                                        - desktop-feedback
-                                        - session
-                                        - streaming
-                                        - tunnel
-                                        - usb-redirection
-                                transport_type:
-                                    description: Transport Type
-                                    type: str
-                                    choices:
-                                        - pcoip
-                                        - rdp
-                        webex-meeting:
-                            description:
-                            type: dict
-                            suboptions:
-                                traffic_type:
-                                    description: Traffic Type
-                                    type: str
-                                    choices:
-                                        - control
-                                        - sharing
-                                        - streaming
-                                transport_type:
-                                    description: Transport Type
-                                    type: str
-                                    choices:
-                                        - http
-                        wyze-zero-client:
-                            description:
-                            type: dict
-                            suboptions:
-                                traffic_type:
-                                    description: Traffic Type
-                                    type: str
-                                    choices:
-                                        - streaming
-                        xmpp-client:
-                                    description:
-                                    type: bool
+                            required: true
                         source:
                             description: Specifies the source of the application.
                             type: str
@@ -376,23 +112,68 @@ options:
                                 - rsvp
                                 - cac
                         vendor:
-                            description:
-                                - Specifies the name of the vendor.
-                                - Refer to the manual to get a list of supported vendors for the respective application name.
+                            description: Specifies the name of the vendor.
                             type: str
                         version:
                             description: Specifies the version number.
                             type: str
+                application_attribute:
+                    description:
+                        - Match Medianet Flow traffic based on a single Medianet metadata attribute.
+                        - Only available in standard class-maps.
+                    type: dict
+                    mutually_exclusive: [[category, device_class, media_type, sub_category, tcl]]
+                    suboptions:
+                        category:
+                            description: Specifies the category type that the control plane classification engine must match.
+                            type: str
+                            choices:
+                                - business-and-productivity-tools
+                                - physical-security
+                                - voice-and-video
+                        device_class:
+                            description: Specifies the device class to match.
+                            type: str
+                            choices:
+                                - desktop-conferencing
+                                - desktop-virtualization
+                                - physical-phone
+                                - room-conferencing
+                                - software-phone
+                                - surveillance
+                        media_type:
+                            description: Specifies the type of media to match.
+                            type: str
+                            choices:
+                                - audio
+                                - audio-video
+                                - control
+                                - data
+                                - video
+                        sub_category:
+                            description: Specifies the subcategory to match.
+                            type: str
+                            choices:
+                                - control-and-signaling
+                                - remote-access-terminal
+                                - video-surveillance
+                                - voice-video-chat-collaboration
+                        tcl:
+                            description: Traffic Class Label to match.
+                            type: str
                 application_group:
                     description:
-                        - Application Group to match
+                        - Match Medianet Flow traffic based on a Medianet metadata application-group.
+                        - Only available in standard class-maps.
                     type: str
                     choices:
                         - telepresence-group
                         - vmware-group
                         - webex-group
                 cac_status:
-                    description: Call Admission Control status
+                    description:
+                        - Call Admission Control status
+                        - Only available in standard class-maps.
                     type: str
                     choices:
                         - admitted
@@ -401,85 +182,61 @@ options:
                     description:
                         - Use a traffic class as a match criterion.
                         - Creating circular class-maps is not allowed!
+                        - Only available in standard class-maps.
                     type: str
                 cos:
                     description:
                         - Match a packet on the basis of a Layer 2 class of service (CoS)/Inter-Switch Link (ISL) marking
-                        - Up to 8 class-of-service values may be entered
-                    type: dict
-                    suboptions:
-                        cos_0:
-                            description: Determines if COS value 0 should be matched in this match.
-                            type: bool
-                        cos_1:
-                            description: Determines if COS value 1 should be matched in this match.
-                            type: bool
-                        cos_2:
-                            description: Determines if COS value 2 should be matched in this match.
-                            type: bool
-                        cos_3:
-                            description: Determines if COS value 3 should be matched in this match.
-                            type: bool
-                        cos_4:
-                            description: Determines if COS value 4 should be matched in this match.
-                            type: bool
-                        cos_5:
-                            description: Determines if COS value 5 should be matched in this match.
-                            type: bool
-                        cos_6:
-                            description: Determines if COS value 6 should be matched in this match.
-                            type: bool
-                        cos_7:
-                            description: Determines if COS value 7 should be matched in this match.
-                            type: bool
+                        - Up to 8 class-of-service values may be entered per match criterion.
+                        - Only available in standard class-maps.
+                    type: list
+                    elements: int
                 cos_inner:
                     description:
                         - Match the inner cos of QinQ packets on a Layer 2 class of service (CoS) marking
                         - Up to 4 class-of-service values may be entered.
-                    type: dict
-                    suboptions:
-                        cos_inner_0:
-                            description: Determines if COS inner value 0 should be matched in this match.
-                            type: bool
-                        cos_inner_1:
-                            description: Determines if COS inner value 1 should be matched in this match.
-                            type: bool
-                        cos_inner_2:
-                            description: Determines if COS inner value 2 should be matched in this match.
-                            type: bool
-                        cos_inner_3:
-                            description: Determines if COS inner value 3 should be matched in this match.
-                            type: bool
-                        cos_inner_4:
-                            description: Determines if COS inner value 4 should be matched in this match.
-                            type: bool
-                        cos_inner_5:
-                            description: Determines if COS inner value 5 should be matched in this match.
-                            type: bool
-                        cos_inner_6:
-                            description: Determines if COS inner value 6 should be matched in this match.
-                            type: bool
-                        cos_inner_7:
-                            description: Determines if COS inner value 7 should be matched in this match.
-                            type: bool
+                        - Only available in standard class-maps per match criterion..
+                    type: list
+                    elements: int
                 destination_mac_address:
                     description:
                         - Use the destination MAC address as a match criterion
-                        - address format -> 00:00:00:00:00:00
+                        - address format must be formatted as 00:00:00:00:00:00
+                        - Only available in standard class-maps.
                     type: str
                 discard_class:
                     description:
-                        - Number of the discard class being matched.
+                        - Use the number of a discard class as a match criterion.
                         - Valid values are 0 to 7.
+                        - Only available in standard class-maps.
                     type: int
-                field:
-                    description: todo
-                    type: str
-                object_group_security:
-                    description: Match traffic coming from, or going to a specified obejct-group.
+                dscp:
+                    description:
+                        - Match IP and IPv6 DSCP values.
+                        - Only available in standard class-maps.
                     type: dict
                     suboptions:
-                        direction:
+                        dscp_values:
+                            description:
+                                - A list of at least 1, and at most 8 DSCP values matched by this criterion.
+                                - Valid vlaues are numbers (0 to 63) representing differentiated services code point values
+                            type: list
+                            required: true
+                            elements: int
+                        ip_versions:
+                            description: todo
+                            type: str
+                            default: IPv4-and-IPv6
+                            choices:
+                                - IPv4-and-IPv6
+                                - IPv4
+                object_group_security:
+                    description:
+                        - Match traffic coming from, or going to a specified obejct-group.
+                        - Only available in standard class-maps.
+                    type: dict
+                    suboptions:
+                        endpoint:
                             description: Match destination/source object-group security
                             type: str
                             required: true
@@ -491,7 +248,9 @@ options:
                             type: str
                             required: true
                 input_interface:
-                    description: Use the specified input interface as a match criterion
+                    description:
+                        - Use the specified input interface as a match criterion.
+                        - Only available in standard class-maps.
                     type: dict
                     suboptions:
                         interface_name:
@@ -575,41 +334,17 @@ options:
                                 - Refer to the manual for the correct range for each type of interface.
                             type: int
                             required: true
-                ip_dscp:
-                    description:
-                        - Match at least one and at most four IP DSCP values.
-                        - Valid options include the following
-                        - Numbers (0 to 63) representing differentiated services code point values
-                        - AF numbers (for example, af11) identifying specific AF DSCPs
-                        - CS numbers (for example, cs1) identifying specific CS DSCPs
-                        - the string 'default' matches packets with default dscp (000000)
-                        - the string 'ef' matches packets with EF dscp (101110)
-                    type: dict
-                    suboptions:
-                        dscp_value_1:
-                            description: The first DSCP value to match.
-                            type: str
-                            required: true
-                        dscp_value_2:
-                            description: The second DSCP value to match.
-                            type: str
-                            required: true
-                        dscp_value_3:
-                            description: The third DSCP value to match.
-                            type: str
-                            required: true
-                        dscp_value_4:
-                            description: The fourth DSCP value to match.
-                            type: str
-                            required: true
                 ip_precedence:
                     description:
                         - A list of up to 4 IP precedence values to use as match criteria.
                         - Valid range is 0-7
+                        - Only available in standard class-maps.
                     type: list
                     elements: int
                 ip_rtp:
-                    description: Use the Real-Time Protocol (RTP) port as the match criterion.
+                    description:
+                        - Use the Real-Time Protocol (RTP) port as the match criterion.
+                        - Only available in standard class-maps.
                     type: dict
                     suboptions:
                         starting_port_number:

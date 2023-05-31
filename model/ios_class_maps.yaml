@@ -30,7 +30,7 @@ options:
             choices:
                 - match-all
                 - match-any
-        decription:
+        description:
             description:
                 - Comment or a description that is added to the class map.
                 - The character-string cannot exceed 161 characters.
@@ -74,6 +74,34 @@ options:
                         - Configures the match criteria to be successful for all packets.
                         - Only available in standard class-maps.
                     type: bool
+                application:
+                    description:
+                        - Match Medianet Flow traffic based on application name, source, vendor and version.
+                        - Only available in standard class-maps.
+                    type: dict
+                    mutually_exclusive: [[source, vendor, version]]
+                    suboptions:
+                        name:
+                            description: Name of the application that the control plane classification engine must match.
+                            type: str
+                            required: true
+                        source:
+                            description: Specifies the source of the application.
+                            type: str
+                            choices:
+                                - cli
+                                - cube
+                                - msp
+                                - nbar
+                                - rfmd
+                                - rsvp
+                                - cac
+                        vendor:
+                            description: Specifies the name of the vendor.
+                            type: str
+                        version:
+                            description: Specifies the version number.
+                            type: str
                 application_attribute:
                     description:
                         - Match Medianet Flow traffic based on a single Medianet metadata attribute.
@@ -118,50 +146,6 @@ options:
                         tcl:
                             description: Traffic Class Label to match.
                             type: str
-                application:
-                    description:
-                        - Match Medianet Flow traffic based on application name, source, vendor and version.
-                        - Only available in standard class-maps.
-                    type: dict
-                    mutually_exclusive: [[source, vendor, version]]
-                    suboptions:
-                        name:
-                            description: Name of the application that the control plane classification engine must match.
-                            type: str
-                            choices:
-                                - cisco-phone
-                                - citrix
-                                - h323
-                                - ip-camera
-                                - jabber
-                                - rtp
-                                - rtsp
-                                - sip
-                                - surveillance-distribution
-                                - telepresence-control
-                                - telepresence-data
-                                - telepresence-media
-                                - vmware-view
-                                - webex-meeting
-                                - wyze-zero-client
-                                - xmpp-client
-                        source:
-                            description: Specifies the source of the application.
-                            type: str
-                            choices:
-                                - cli
-                                - cube
-                                - msp
-                                - nbar
-                                - rfmd
-                                - rsvp
-                                - cac
-                        vendor:
-                            description: Specifies the name of the vendor.
-                            type: str
-                        version:
-                            description: Specifies the version number.
-                            type: str
                 application_group:
                     description:
                         - Match Medianet Flow traffic based on a Medianet metadata application-group.
@@ -202,21 +186,42 @@ options:
                 destination_mac_address:
                     description:
                         - Use the destination MAC address as a match criterion
-                        - address format -> 00:00:00:00:00:00
+                        - address format must be formatted as 00:00:00:00:00:00
+                        - Only available in standard class-maps.
                     type: str
                 discard_class:
                     description:
-                        - Number of the discard class being matched.
+                        - Use the number of a discard class as a match criterion.
                         - Valid values are 0 to 7.
+                        - Only available in standard class-maps.
                     type: int
-                field:
-                    description: todo
-                    type: str
-                object_group_security:
-                    description: Match traffic coming from, or going to a specified obejct-group.
+                dscp:
+                    description:
+                        - Match IP and IPv6 DSCP values.
+                        - Only available in standard class-maps.
                     type: dict
                     suboptions:
-                        direction:
+                        dscp_values:
+                            description:
+                                - A list of at least 1, and at most 8 DSCP values matched by this criterion.
+                                - Valid vlaues are numbers (0 to 63) representing differentiated services code point values
+                            type: list
+                            required: true
+                            elements: int
+                        ip_versions:
+                            description: todo
+                            type: str
+                            default: IPv4-and-IPv6
+                            choices:
+                                - IPv4-and-IPv6
+                                - IPv4
+                object_group_security:
+                    description:
+                        - Match traffic coming from, or going to a specified obejct-group.
+                        - Only available in standard class-maps.
+                    type: dict
+                    suboptions:
+                        endpoint:
                             description: Match destination/source object-group security
                             type: str
                             required: true
@@ -228,7 +233,9 @@ options:
                             type: str
                             required: true
                 input_interface:
-                    description: Use the specified input interface as a match criterion
+                    description:
+                        - Use the specified input interface as a match criterion.
+                        - Only available in standard class-maps.
                     type: dict
                     suboptions:
                         interface_name:
@@ -312,41 +319,17 @@ options:
                                 - Refer to the manual for the correct range for each type of interface.
                             type: int
                             required: true
-                ip_dscp:
-                    description:
-                        - Match at least one and at most four IP DSCP values.
-                        - Valid options include the following
-                        - Numbers (0 to 63) representing differentiated services code point values
-                        - AF numbers (for example, af11) identifying specific AF DSCPs
-                        - CS numbers (for example, cs1) identifying specific CS DSCPs
-                        - the string 'default' matches packets with default dscp (000000)
-                        - the string 'ef' matches packets with EF dscp (101110)
-                    type: dict
-                    suboptions:
-                        dscp_value_1:
-                            description: The first DSCP value to match.
-                            type: str
-                            required: true
-                        dscp_value_2:
-                            description: The second DSCP value to match.
-                            type: str
-                            required: true
-                        dscp_value_3:
-                            description: The third DSCP value to match.
-                            type: str
-                            required: true
-                        dscp_value_4:
-                            description: The fourth DSCP value to match.
-                            type: str
-                            required: true
                 ip_precedence:
                     description:
                         - A list of up to 4 IP precedence values to use as match criteria.
                         - Valid range is 0-7
+                        - Only available in standard class-maps.
                     type: list
                     elements: int
                 ip_rtp:
-                    description: Use the Real-Time Protocol (RTP) port as the match criterion.
+                    description:
+                        - Use the Real-Time Protocol (RTP) port as the match criterion.
+                        - Only available in standard class-maps.
                     type: dict
                     suboptions:
                         starting_port_number:

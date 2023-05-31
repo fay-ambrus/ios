@@ -64,7 +64,6 @@ class Class_maps(ResourceModule):
         """ Generate configuration commands to send based on
             want, have and desired state.
         """
-        syslog('keraklog: ' + str(self.have))
         wantd = {entry['name']: entry for entry in self.want}
         haved = {entry['name']: entry for entry in self.have}
 

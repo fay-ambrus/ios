@@ -29,6 +29,30 @@ from ansible_collections.cisco.ios.plugins.module_utils.network.ios.argspec.clas
     Class_mapsArgs,
 )
 
+DSCP_VALUES = {
+    "af11": 40,
+    "af12": 12,
+    "af13": 14,
+    "af21": 18,
+    "af22": 20,
+    "af23": 22,
+    "af31": 26,
+    "af32": 28,
+    "af33": 30,
+    "af41": 34,
+    "af42": 36,
+    "af43": 38,
+    "cs1": 8,
+    "cs2": 16,
+    "cs3": 24,
+    "cs4": 32,
+    "cs5": 40,
+    "cs6": 48,
+    "cs7": 56,
+    "default": 0,
+    "ef": 46
+}
+
 class Class_mapsFacts(object):
     """ The ios class_maps facts class
     """
@@ -64,6 +88,37 @@ class Class_mapsFacts(object):
         objs = list(class_maps_parser.parse().values())
 
         ansible_facts['ansible_network_resources'].pop('class_maps', None)
+
+        for class_map in objs:
+            if class_map.get("matches"):
+                matches = class_map.get("matches")
+                for match in matches:
+                    if match.get("cos"):
+                        cos_values = match.get("cos")
+                        match["cos"] = list(filter(lambda v: v != None, cos_values))
+
+                    if match.get("cos_inner"):
+                        cos_values = match.get("cos_inner")
+                        match["cos inner"] = list(filter(lambda v: v != None, cos_values))
+
+                    if match.get("dscp"):
+                        dscp = match.get("dscp")
+                        if dscp.get("dscp_values"):
+                            dscp_values = dscp.get("dscp_values")
+                            for i in range(len(dscp_values)):
+                                if DSCP_VALUES.get(dscp_values[i], None) != None:
+                                    dscp_values[i] = DSCP_VALUES.get(dscp_values[i])
+                            dscp["dscp_values"] = list(filter(lambda v: v != None, dscp_values))
+
+                    if match.get("mpls_experimental_topmost"):
+                        mpls_values = match.get("mpls_experimental_topmost")
+                        match["mpls_experimental_topmost"] = list(filter(lambda v: v != None, mpls_values))
+
+                    # this possibly has to be retired
+                    #if match.get("start"):
+                    #    start = match.get("start")
+                    #    if start.get("mask"):
+                    #        start["mask"] = int(start["mask"])
 
         params = utils.remove_empties(
             class_maps_parser.validate_config(self.argument_spec, {"config": objs}, redact=True)

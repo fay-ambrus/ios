@@ -26,23 +26,22 @@ class Class_mapsTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
-            "name": "standard class map names",
+            "name": "class maps",
             "getval": re.compile(
                 r"""^class-map
-                    \s(type\s(?P<class_map_type>access-control|appnav|site-manager|stack|traffic)\s)?
-                    (?P<match_type>match-any|match-all)
+                    \s(?P<match_type>match-any|match-all)
                     \s(?P<class_map_name>\S+)
                 \s*$""",
                 re.VERBOSE),
             "result": {
                 "{{ class_map_name|d() }}": {
-                    "name": "{{ class_map_name }}",
-                    "type": "{{ class_map_type }}",
-                    "match_type": "{{ match_type }}"
-                }
+                        "class_map_type": "{{ class_map_type }}",
+                        "name": "{{ class_map_name }}",
+                        "match_type": "{{ match_type }}"
+                    }
             },
             "shared": True
-        }, #todo: add separate entry for multicast group flows
+        },
         {
             "name": "description",
             "getval": re.compile(
@@ -52,12 +51,12 @@ class Class_mapsTemplate(NetworkTemplate):
                 re.VERBOSE),
             "result": {
                 "{{ class_map_name|d() }}": {
-                    "class_map_decription": "{{ description }}"
+                    "description": "{{ description }}"
                 }
             },
         },
         {
-            "name": "match access groups",
+            "name": "match access group",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
                     \saccess-group
@@ -68,7 +67,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "access_groups": {
+                            "access_group": {
                                 "name": "{{ name }}",
                                 "number": "{{ number }}",
                             },
@@ -96,11 +95,11 @@ class Class_mapsTemplate(NetworkTemplate):
             }
         },
         {
-            "name": "match application name regexp",
+            "name": "match application",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
                     \sapplication
-                    \s(?P<regexp>\S+)
+                    \s(?P<name>\S+)
                     (\ssource\s(?P<source>cli|cube|msp|nbar|rfmd|rsvp|cac))?
                     (\svendor\s(?P<vendor>)\S+)?
                     (\sversion\s(?P<version>\S+))?
@@ -110,8 +109,8 @@ class Class_mapsTemplate(NetworkTemplate):
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "application_name": {
-                                "name_regexp": "{{ regexp }}",
+                            "application": {
+                                "name": "{{ name }}",
                                 "source": "{{ source }}",
                                 "vendor": "{{ vendor }}",
                                 "version": "{{ version }}",
@@ -223,16 +222,16 @@ class Class_mapsTemplate(NetworkTemplate):
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "cos": {
-                                "{{ 'cos_' + cos_val_0 if cos_val_0 is defined else None }}": "{{ not not cos_val_0 }}",
-                                "{{ 'cos_' + cos_val_1 if cos_val_1 is defined else None }}": "{{ not not cos_val_1 }}",
-                                "{{ 'cos_' + cos_val_2 if cos_val_2 is defined else None }}": "{{ not not cos_val_2 }}",
-                                "{{ 'cos_' + cos_val_3 if cos_val_3 is defined else None }}": "{{ not not cos_val_3 }}",
-                                "{{ 'cos_' + cos_val_4 if cos_val_4 is defined else None }}": "{{ not not cos_val_4 }}",
-                                "{{ 'cos_' + cos_val_5 if cos_val_5 is defined else None }}": "{{ not not cos_val_5 }}",
-                                "{{ 'cos_' + cos_val_6 if cos_val_6 is defined else None }}": "{{ not not cos_val_6 }}",
-                                "{{ 'cos_' + cos_val_7 if cos_val_7 is defined else None }}": "{{ not not cos_val_7 }}",
-                            },  
+                            "cos": [
+                                "{{ cos_val_0 if cos_val_0 is defined else None }}",
+                                "{{ cos_val_1 if cos_val_1 is defined else None }}",
+                                "{{ cos_val_2 if cos_val_2 is defined else None }}",
+                                "{{ cos_val_3 if cos_val_3 is defined else None }}",
+                                "{{ cos_val_4 if cos_val_4 is defined else None }}",
+                                "{{ cos_val_5 if cos_val_5 is defined else None }}",
+                                "{{ cos_val_6 if cos_val_6 is defined else None }}",
+                                "{{ cos_val_7 if cos_val_7 is defined else None }}"
+                            ],  
                             "negate": "{{ not not negate }}"
                         }
                     ]
@@ -245,7 +244,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 r"""^\s*match(\s(?P<negate>not))?
                     \scos
                     \sinner
-                    \s*(?P<cos_inner_val_0>\d)
+                    \s* (?P<cos_inner_val_0>\d)
                     (\s*(?P<cos_inner_val_1>\d))?
                     (\s*(?P<cos_inner_val_2>\d))?
                     (\s*(?P<cos_inner_val_3>\d))?
@@ -255,12 +254,12 @@ class Class_mapsTemplate(NetworkTemplate):
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "cos_inner": {
-                                "{{ 'cos_inner_' + cos_inner_val_0 if cos_inner_val_0 is defined else None }}": "{{ not not cos_inner_val_0 }}",
-                                "{{ 'cos_inner_' + cos_inner_val_1 if cos_inner_val_1 is defined else None }}": "{{ not not cos_inner_val_1 }}",
-                                "{{ 'cos_inner_' + cos_inner_val_2 if cos_inner_val_2 is defined else None }}": "{{ not not cos_inner_val_2 }}",
-                                "{{ 'cos_inner_' + cos_inner_val_3 if cos_inner_val_3 is defined else None }}": "{{ not not cos_inner_val_3 }}",
-                            },  
+                            "cos_inner": [
+                                "{{ cos_inner_val_0 if cos_inner_val_0 is defined else None }}",
+                                "{{ cos_inner_val_1 if cos_inner_val_1 is defined else None }}",
+                                "{{ cos_inner_val_2 if cos_inner_val_2 is defined else None }}",
+                                "{{ cos_inner_val_3 if cos_inner_val_3 is defined else None }}",
+                            ],  
                             "negate": "{{ not not negate }}"
                         }
                     ]
@@ -353,34 +352,80 @@ class Class_mapsTemplate(NetworkTemplate):
             }
         },
         {
-        "name": "match ip dscp",
+            "name": "match dscp",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
-                    \sip
                     \sdscp
-                    \s*(?P<dscp_value_1>(\d{1,2})|(af[1-4][1-3])|(cs[1-7])|default|ef)
-                    \s*(?P<dscp_value_2>(\d{1,2})|(af[1-4][1-3])|(cs[1-7])|default|ef)?
-                    \s*(?P<dscp_value_3>(\d{1,2})|(af[1-4][1-3])|(cs[1-7])|default|ef)?
-                    \s*(?P<dscp_value_4>(\d{1,2})|(af[1-4][1-3])|(cs[1-7])|default|ef)?
+                    \s* (?P<dscp_val_0>\S+)
+                    (\s*(?P<dscp_val_1>\S+))?
+                    (\s*(?P<dscp_val_2>\S+))?
+                    (\s*(?P<dscp_val_3>\S+))?
+                    (\s*(?P<dscp_val_4>\S+))?
+                    (\s*(?P<dscp_val_5>\S+))?
+                    (\s*(?P<dscp_val_6>\S+))?
+                    (\s*(?P<dscp_val_7>\S+))?
                 \s*$""",
                 re.VERBOSE),
             "result": {
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "ip_dscp": {
-                                "dscp_value_1": "{{ dscp_value_1 }}",
-                                "dscp_value_2": "{{ dscp_value_2 }}",
-                                "dscp_value_3": "{{ dscp_value_3 }}",
-                                "dscp_value_4": "{{ dscp_value_4 }}"
-                            },
+                            "dscp":{
+                                "dscp_values": [
+                                    "{{ dscp_val_0 if dscp_val_0 is defined else None }}",
+                                    "{{ dscp_val_1 if dscp_val_1 is defined else None }}",
+                                    "{{ dscp_val_2 if dscp_val_2 is defined else None }}",
+                                    "{{ dscp_val_3 if dscp_val_3 is defined else None }}",
+                                    "{{ dscp_val_4 if dscp_val_4 is defined else None }}",
+                                    "{{ dscp_val_5 if dscp_val_5 is defined else None }}",
+                                    "{{ dscp_val_6 if dscp_val_6 is defined else None }}",
+                                    "{{ dscp_val_7 if dscp_val_7 is defined else None }}"
+                                ]
+                            },  
                             "negate": "{{ not not negate }}"
                         }
                     ]
                 }
             }
         },
-        # todo ip precedence
+        {
+            "name": "match ip dscp",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sip\sdscp
+                    \s* (?P<dscp_val_0>\S+)
+                    (\s*(?P<dscp_val_1>\S+))?
+                    (\s*(?P<dscp_val_2>\S+))?
+                    (\s*(?P<dscp_val_3>\S+))?
+                    (\s*(?P<dscp_val_4>\S+))?
+                    (\s*(?P<dscp_val_5>\S+))?
+                    (\s*(?P<dscp_val_6>\S+))?
+                    (\s*(?P<dscp_val_7>\S+))?
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "dscp":{
+                                "dscp_values": [
+                                    "{{ dscp_val_0 if dscp_val_0 is defined else None }}",
+                                    "{{ dscp_val_1 if dscp_val_1 is defined else None }}",
+                                    "{{ dscp_val_2 if dscp_val_2 is defined else None }}",
+                                    "{{ dscp_val_3 if dscp_val_3 is defined else None }}",
+                                    "{{ dscp_val_4 if dscp_val_4 is defined else None }}",
+                                    "{{ dscp_val_5 if dscp_val_5 is defined else None }}",
+                                    "{{ dscp_val_6 if dscp_val_6 is defined else None }}",
+                                    "{{ dscp_val_7 if dscp_val_7 is defined else None }}"
+                                ],
+                                "ip_versions": "IPv4"
+                            },  
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
         {
             "name": "match ip rtp",
             "getval": re.compile(
@@ -431,25 +476,37 @@ class Class_mapsTemplate(NetworkTemplate):
             "name": "match mpls experimental",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
-                    \smetadata
-                    \s(?P<metadata_type>(cac\sstatus)|(called-uri)|(calling-uri)|(device-model)|(global-session-id)|(multi-party-session-id))
-                    \s(?P<metadata_value>\S+)
+                    \smpls\sexperimental\stopmost
+                    \s* (?P<mpls_val_0>\d)
+                    (\s*(?P<mpls_val_1>\d))?
+                    (\s*(?P<mpls_val_2>\d))?
+                    (\s*(?P<mpls_val_3>\d))?
+                    (\s*(?P<mpls_val_4>\d))?
+                    (\s*(?P<mpls_val_5>\d))?
+                    (\s*(?P<mpls_val_6>\d))?
+                    (\s*(?P<mpls_val_7>\d))?
                 \s*$""",
                 re.VERBOSE),
             "result": {
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "metadata": {
-                                "{{ metadata_type.replace('-', '_').replace(' ', '_') }}": "{{ metadata_value }}",
-                            },
+                            "mpls_experimental_topmost": [
+                                "{{ mpls_val_0 if mpls_val_0 is defined else None }}",
+                                "{{ mpls_val_1 if mpls_val_1 is defined else None }}",
+                                "{{ mpls_val_2 if mpls_val_2 is defined else None }}",
+                                "{{ mpls_val_3 if mpls_val_3 is defined else None }}",
+                                "{{ mpls_val_4 if mpls_val_4 is defined else None }}",
+                                "{{ mpls_val_5 if mpls_val_5 is defined else None }}",
+                                "{{ mpls_val_6 if mpls_val_6 is defined else None }}",
+                                "{{ mpls_val_7 if mpls_val_7 is defined else None }}"
+                            ],
                             "negate": "{{ not not negate }}"
                         }
                     ]
                 }
             }
         },
-        # todo mpls_experimental_topmost
         {
             "name": "match packet length",
             "getval": re.compile(
@@ -501,9 +558,9 @@ class Class_mapsTemplate(NetworkTemplate):
             "name": "match protocol",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
-                    \sprotocol
+                    \s(protocol)
                     \s(?P<protocol_name>\S+)
-                    (\s(?P<subprotocol_parameter_name>\S+)
+                    (\s(?P<subprotocol_parameter_name>\S+)?
                     \s"(?P<subprotocol_parameter_value>.+)")?
                 \s*$""",
                 re.VERBOSE),
@@ -565,7 +622,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             }
         },
-                {
+        {
             "name": "match source mac",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
@@ -580,6 +637,40 @@ class Class_mapsTemplate(NetworkTemplate):
                         {
                             "source_mac_address": "{{ source_mac.lower() }}",
                             "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "match start eq or neq",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sstart
+                    \s(?P<layer>l2|l3)-start
+                    \soffset
+                    \s(?P<offset>\d{1,3})
+                    \ssize
+                    \s(?P<size>\d{1,2})
+                    \s(?P<eq_type>eq|neq)
+                    \s(?P<value>\S+)
+                    (\smask
+                    \s(?P<mask>\S+))?
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "start": {
+                                "layer": "{{ layer }}",
+                                "offset": "{{ offset }}",
+                                "size": "{{ size }}",
+                                "{{ eq_type }}": {
+                                    "value": "{{ value }}",
+                                    "mask": "{{ mask }}"
+                                }
+                            }
                         }
                     ]
                 }

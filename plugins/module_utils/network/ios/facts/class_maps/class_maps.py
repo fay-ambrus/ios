@@ -114,12 +114,6 @@ class Class_mapsFacts(object):
                         mpls_values = match.get("mpls_experimental_topmost")
                         match["mpls_experimental_topmost"] = list(filter(lambda v: v != None, mpls_values))
 
-                    # this possibly has to be retired
-                    #if match.get("start"):
-                    #    start = match.get("start")
-                    #    if start.get("mask"):
-                    #        start["mask"] = int(start["mask"])
-
         params = utils.remove_empties(
             class_maps_parser.validate_config(self.argument_spec, {"config": objs}, redact=True)
         )

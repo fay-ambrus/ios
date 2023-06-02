@@ -40,6 +40,8 @@ class Class_mapsTemplate(NetworkTemplate):
                         "match_type": "{{ match_type }}"
                     }
             },
+            "setval": "class-map {{ match_type if match_type is defined else '' }} {{ name }}",
+            "compval": "name",
             "shared": True
         },
         {
@@ -54,6 +56,8 @@ class Class_mapsTemplate(NetworkTemplate):
                     "description": "{{ description }}"
                 }
             },
+            "compval": "description",
+            "setval": "description {{ description }}"
         },
         {
             "name": "match access group",
@@ -76,6 +80,9 @@ class Class_mapsTemplate(NetworkTemplate):
                     ]
                 }
             },
+            "compval": "access_group",
+            "setval": "match {{ 'not' if negate is defined and negate else '' }} access-group "
+            "{{ access_group.number if access_group.number is defined else 'name ' + access_group.name }}",
         },
         {
             "name": "match any",
@@ -92,7 +99,9 @@ class Class_mapsTemplate(NetworkTemplate):
                         }
                     ]
                 }
-            }
+            },
+            "compval": "any",
+            "setval": "{{ 'match any' if any else '' }}"
         },
         {
             "name": "match application",
@@ -118,8 +127,14 @@ class Class_mapsTemplate(NetworkTemplate):
                             "negate": "{{ not not negate }}"
                         }
                     ]
-                }
-            }
+                },
+            },
+            "compval": "application",
+            "setval": "match {{ 'not' if negate is defined and negate else '' }} application "
+            "{{ application.name }} "
+            "{{ 'source ' + application.source if application.source is defined }}"
+            "{{ 'vendor ' + application.vendor if application.vendor is defined }}"
+            "{{ 'version ' + application.version if application.version is defined }}"
         },
         {
             "name": "match application attribute",
@@ -142,7 +157,14 @@ class Class_mapsTemplate(NetworkTemplate):
                         }
                     ]
                 }
-            }
+            },
+            "compval":  "application_attribute",
+            "setval": "match {{ 'not' if negate is defined and negate else '' }} application attribute "
+            "{{ 'category ' + application_attribute.category if application_attribute.category is defined }}"            
+            "{{ 'device-class ' + application_attribute.device_class if application_attribute.device_class is defined }}"
+            "{{ 'media-type ' + application_attribute.media_type if application_attribute.media_type is defined }}"
+            "{{ 'sub-category ' + application_attribute.sub_category if application_attribute.sub_category is defined }}"
+            "{{ 'tcl ' + application_attribute.tcl if application_attribute.tcl is defined }}"            
         },
         {
             "name": "match application group",
@@ -162,7 +184,9 @@ class Class_mapsTemplate(NetworkTemplate):
                         }
                     ]
                 }
-            }
+            },
+            "compval": "application_group",
+            "setval": "match {{ 'not' if negate is defined and negate else '' }} application application-group {{ application_group }}"
         },
         {
             "name": "match class-map",
@@ -181,7 +205,9 @@ class Class_mapsTemplate(NetworkTemplate):
                         }
                     ]
                 }
-            }
+            },
+            "compval": "class_map",
+            "setval": "match {{ 'not' if negate is defined and negate else '' }} class-map {{ class_map }}"
         },
         {
             "name": "match cac status",
@@ -201,7 +227,9 @@ class Class_mapsTemplate(NetworkTemplate):
                         }
                     ]
                 }
-            }
+            },
+            "compval": "cac_status",
+            "setval": "match {{ 'not' if negate is defined and negate else '' }} cac status {{ cac_status }}"
         },
         {
             "name": "match cos",
@@ -236,7 +264,10 @@ class Class_mapsTemplate(NetworkTemplate):
                         }
                     ]
                 }
-            }
+            },
+            "compval": "cos",
+            "setval": "match {{ 'not' if negate is defined and negate else '' }} cos"
+            "{% for cos_value in cos %} {{ cos_value }}{% endfor %}"
         },
         {
             "name": "match cos inner",
@@ -264,7 +295,10 @@ class Class_mapsTemplate(NetworkTemplate):
                         }
                     ]
                 }
-            }
+            },
+            "compval": "cos_inner",
+            "setval": "match {{ 'not' if negate is defined and negate else '' }} cos inner"
+            "{% for cos_inner_value in cos_inner %} {{ cos_inner_value }}{% endfor %}"
         },
         {
             "name": "match destination mac",
@@ -713,7 +747,10 @@ class Class_mapsTemplate(NetworkTemplate):
                         }
                     ]
                 }
-            }
+            },
+            "compval": "vlan_id",
+            "setval": "match {{ 'not' if negate is defined and negate else '' }} "
+            "vlan {{ vlan_id }}",
         },
         {
             "name": "match traffic category",

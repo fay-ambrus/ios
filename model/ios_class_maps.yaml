@@ -51,6 +51,7 @@ options:
             description: A list of classification criteria.
             type: list
             elements: dict
+            mutually_exclusive: [[not, any]]
             suboptions:
                 access_group:
                     description:

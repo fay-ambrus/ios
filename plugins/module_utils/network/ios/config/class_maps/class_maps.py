@@ -47,6 +47,18 @@ class Class_maps(ResourceModule):
             tmplt=Class_mapsTemplate(),
         )
         self.parsers = [
+            "class maps",
+            "description",
+            "match vlan",
+            "match access group",
+            "match any",
+            "match application",
+            "match application attribute",
+            "match application group",
+            "match class-map",
+            "match cac status",
+            "match cos",
+            "match cos inner"
         ]
 
     def execute_module(self):
@@ -93,4 +105,45 @@ class Class_maps(ResourceModule):
            the `want` and `have` data with the `parsers` defined
            for the Class_maps network resource.
         """
+        
+        begin = len(self.commands)
+
+        # first of all, compare the class-map headers
         self.compare(parsers=self.parsers, want=want, have=have)
+
+        want_matches = []
+        have_matches = []
+
+        if want and want.get("matches"):
+            want_matches = want.get("matches")
+
+        if have and have.get("matches"):
+            have_matches = have.get("matches")
+
+        # raise RuntimeError(str(want_matches) + "/////" + str(have_matches))
+
+        for wm in want_matches:
+            # specific validation has to be done here
+            if wm.get("cos"):
+                wm["cos"] = list(set(wm.get("cos")))
+
+            if wm.get("cos_inner"):
+                wm["cos_inner"] = list(set(wm.get("cos_inner")))
+
+            hm = {}
+            if have_matches.count(wm) > 0:
+                hm = have_matches[have_matches.index(wm)]
+            self.compare(parsers=self.parsers, want=wm, have=hm)
+
+        # raise RuntimeError(self.commands)
+
+        # remove "no description" command, if the class-map has been deleted in advance
+        if begin + 1 < len(self.commands):
+            if self.commands[begin].startswith("no class-map") and self.commands[begin + 1].startswith("no description"):
+                del self.commands[begin + 1]
+
+        # generate the command to enter the approriate class-map's configuration
+        if begin < len(self.commands):
+            if not self.commands[begin].startswith("class-map") and not self.commands[begin].startswith("no class-map"):
+                class_map_cmd = "class-map {0} {1}".format(want["match_type"], want["name"])
+                self.commands.insert(begin, class_map_cmd)

@@ -65,7 +65,7 @@ class TestIosClassMapsModule(TestIosModule):
         self.mock_load_config.stop()
         self.mock_execute_show_command.stop()
 
-    def test_ios_acls_merged(self):
+    def test_ios_class_maps_merged(self):
         self.execute_show_command.return_value = dedent(
             """\
             Standard IP access list test_acl

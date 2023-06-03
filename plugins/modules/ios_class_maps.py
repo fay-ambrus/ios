@@ -17,7 +17,7 @@ module: ios_class_maps
 short_description: Class-Maps resource module
 description:
     - This module configures and manages Class-Maps on IOS platforms.
-version_added: 0.01
+version_added: '0.01'
 author: Ambrus Fay (@fay-ambrus)
 notes:
     - Tested against Cisco IOSXE version 17.3 on CML.
@@ -47,30 +47,86 @@ options:
                 - match-any
         description:
             description:
-                - Comment or a description that is added to the class map.
+                - Comment or description that is added to the class map.
                 - The character-string cannot exceed 161 characters.
             type: str
         class_type:
             description:
                 - Specifies the class-map type.
-                - This Ansible module at this moment only support class-maps ofstandard type.
+                - This Ansible module at this moment only support class-maps of standard type.
                 - Please note, that certain matching criteria might be only available in a specific type of class-map.
             type: str
             default: standard
             choices:
-                - access-control
-                - stack
                 - standard
         matches:
             description: A list of classification criteria.
             type: list
             elements: dict
+            mutually_exclusive:
+                - - negate
+                  - any
+                - - access_group
+                  - any
+                  - application
+                  - application_attribute
+                  - application_group
+                  - cac_status
+                  - class_map
+                  - cos
+                  - cos_inner
+                  - destination_mac_address
+                  - discard_class
+                  - dscp
+                  - object_group_security
+                  - input_interface
+                  - ip_precedence
+                  - ip_rtp
+                  - metadata
+                  - mpls_experimental_topmost
+                  - packet_length
+                  - protocol
+                  - protocol_attribute
+                  - qos_group
+                  - security_group
+                  - source_mac_address
+                  - traffic_category
+                  - vlan
+                  - vlan_inner
+            required_one_of:
+                - - access_group
+                  - any
+                  - application
+                  - application_attribute
+                  - application_group
+                  - cac_status
+                  - class_map
+                  - cos
+                  - cos_inner
+                  - destination_mac_address
+                  - discard_class
+                  - dscp
+                  - object_group_security
+                  - input_interface
+                  - ip_precedence
+                  - ip_rtp
+                  - metadata
+                  - mpls_experimental_topmost
+                  - packet_length
+                  - protocol
+                  - protocol_attribute
+                  - qos_group
+                  - security_group
+                  - source_mac_address
+                  - traffic_category
+                  - vlan
+                  - vlan_inner            
             suboptions:
                 access_group:
-                    description:
-                        - Specifies match criteria for a class map on the basis of the specified access control list (ACL).
-                        - Only available in standard class-maps.
+                    description: Specifies match criteria for a class map on the basis of the specified access control list (ACL).
                     type: dict
+                    mutually_exclusive: [[name, number]]
+                    required_one_of: [[name, number]]
                     suboptions:
                         name:
                             description:
@@ -83,15 +139,14 @@ options:
                                 - The range is from 1 to 2699.
                             type: int
                 any:
-                    description:
-                        - Configures the match criteria to be successful for all packets.
-                        - Only available in standard class-maps.
+                    description: Configures the match criteria to be successful for all packets.
                     type: bool
                 application:
                     description:
                         - Match Medianet Flow traffic based on application name, source, vendor and version.
                         - Only available in standard class-maps.
                     type: dict
+                    mutually_exclusive: [[source, vendor, version]]
                     suboptions:
                         name:
                             description: Name of the application that the control plane classification engine must match.
@@ -115,10 +170,10 @@ options:
                             description: Specifies the version number.
                             type: str
                 application_attribute:
-                    description:
-                        - Match Medianet Flow traffic based on a single Medianet metadata attribute.
-                        - Only available in standard class-maps.
+                    description: Match Medianet Flow traffic based on a single Medianet metadata attribute.
                     type: dict
+                    mutually_exclusive: [[category, device_class, media_type, sub_category, tcl]]
+                    required_one_of: [[category, device_class, media_type, sub_category, tcl]]
                     suboptions:
                         category:
                             description: Specifies the category type that the control plane classification engine must match.
@@ -158,18 +213,14 @@ options:
                             description: Traffic Class Label to match.
                             type: str
                 application_group:
-                    description:
-                        - Match Medianet Flow traffic based on a Medianet metadata application-group.
-                        - Only available in standard class-maps.
+                    description: Match Medianet Flow traffic based on a Medianet metadata application-group.
                     type: str
                     choices:
                         - telepresence-group
                         - vmware-group
                         - webex-group
                 cac_status:
-                    description:
-                        - Call Admission Control status
-                        - Only available in standard class-maps.
+                    description: Call Admission Control status
                     type: str
                     choices:
                         - admitted
@@ -178,33 +229,28 @@ options:
                     description:
                         - Use a traffic class as a match criterion.
                         - Creating circular class-maps is not allowed!
-                        - Only available in standard class-maps.
                     type: str
                 cos:
                     description:
                         - Match a packet on the basis of a Layer 2 class of service (CoS)/Inter-Switch Link (ISL) marking
                         - Up to 8 class-of-service values may be entered per match criterion.
-                        - Only available in standard class-maps.
                     type: list
                     elements: int
                 cos_inner:
                     description:
                         - Match the inner cos of QinQ packets on a Layer 2 class of service (CoS) marking
                         - Up to 4 class-of-service values may be entered.
-                        - Only available in standard class-maps per match criterion..
                     type: list
                     elements: int
                 destination_mac_address:
                     description:
                         - Use the destination MAC address as a match criterion
                         - Address must be formatted as 0000:0000:0000
-                        - Only available in standard class-maps.
                     type: str
                 discard_class:
                     description:
                         - Use the number of a discard class as a match criterion.
                         - Valid values are 0 to 7.
-                        - Only available in standard class-maps.
                     type: int
                 dscp:
                     description:
@@ -215,21 +261,24 @@ options:
                         dscp_values:
                             description:
                                 - A list of at least 1, and at most 8 DSCP values matched by this criterion.
-                                - Valid vlaues are numbers (0 to 63) representing differentiated services code point values
+                                - 'Valid vlaues include:'
+                                - Decimal numbers (0 to 63), representing differentiated services code point values
+                                - af11-af43, representing AF DSCP classes
+                                - cs1-cs7, representing CS DSCP classes
+                                - default, representing default DSCMP (0)
+                                - ef, representing packets with EF DSCP (46)
                             type: list
                             required: true
-                            elements: int
+                            elements: str
                         ip_versions:
-                            description: todo
+                            description: Defines, which version of the IP protocol gets matched by this command.
                             type: str
-                            default: IPv4-and-IPv6
+                            default: ipv4-and-ipv6
                             choices:
-                                - IPv4-and-IPv6
-                                - IPv4
+                                - ipv4-and-ipv6
+                                - ipv4
                 object_group_security:
-                    description:
-                        - Match traffic coming from, or going to a specified obejct-group.
-                        - Only available in standard class-maps.
+                    description: Match traffic coming from, or going to a specified obejct-group.
                     type: dict
                     suboptions:
                         endpoint:
@@ -244,9 +293,7 @@ options:
                             type: str
                             required: true
                 input_interface:
-                    description:
-                        - Use the specified input interface as a match criterion.
-                        - Only available in standard class-maps.
+                    description: Use the specified input interface as a match criterion.
                     type: dict
                     suboptions:
                         interface_type:
@@ -334,13 +381,10 @@ options:
                     description:
                         - A list of up to 4 IP precedence values to use as match criteria.
                         - Valid range is 0-7
-                        - Only available in standard class-maps.
                     type: list
                     elements: int
                 ip_rtp:
-                    description:
-                        - Use the Real-Time Protocol (RTP) port as the match criterion.
-                        - Only available in standard class-maps.
+                    description: Use the Real-Time Protocol (RTP) port as the match criterion.
                     type: dict
                     suboptions:
                         starting_port_number:
@@ -358,6 +402,8 @@ options:
                 metadata:
                     description: Use call metadata as match criterion.
                     type: dict
+                    mutually_exclusive: [[cac_status, called_uri, calling_uri, device_model, global_session_id, multi_party_session_id]]
+                    required_one_of: [[cac_status, called_uri, calling_uri, device_model, global_session_id, multi_party_session_id]]
                     suboptions:
                         cac_status:
                             description: Call Admission Control
@@ -389,6 +435,7 @@ options:
                 packet_length:
                     description: Specify the Layer 3 packet length in the IP header as a match criterion
                     type: dict
+                    required_one_of: [[max, min]]
                     suboptions:
                         max:
                             description:
@@ -412,6 +459,7 @@ options:
                             type: str
                         subprotocol_parameter:
                             description: The subprotocol parameter to be used as a match criterion.
+                            required_together: [[subprotocol_parameter_name, subprotocol_parameter_value]]
                             type: dict
                             suboptions:
                                 subprotocol_parameter_name:
@@ -450,6 +498,8 @@ options:
                 security_group:
                     description: Security group to match.
                     type: dict
+                    mutually_exclusive: [[source_tag, destination_tag]]
+                    required_one_of: [[source_tag, destination_tag]]
                     suboptions:
                         source_tag:
                             description:
@@ -462,100 +512,24 @@ options:
                                 - 0-65533
                             type: int
                 source_mac_address:
-                    description: Use the source MAC address as a match criterion
+                    description:
+                        - Use the source MAC address as a match criterion
+                        - Address must be formatted as 0000:0000:0000
                     type: str
-                start:
-                    description: Configure match criteria on the basis of the datagram header (Layer 2 ) or the network header (Layer 3).
-                    type: dict
-                    suboptions:
-                        layer:
-                            description: Determines the layer which the criterion will start from.
-                            type: str
-                            required: true
-                            choices:
-                                - l2
-                                - l3
-                        offset:
-                            description:
-                                - Match criterion can be made according to any aribitrary offset.
-                                - Valid values 0-255
-                            type: int
-                            required: true
-                        size:
-                            description:
-                                - The number of bytes to match on
-                                - Valid values 1-32
-                            type: int
-                            required: true
-                        eq:
-                            description: Match criteria is met if the packet is equal to the specified value or mask.
-                            type: dict
-                            suboptions:
-                                value:
-                                    description:
-                                        - Value for which the packet must be in accordance with.
-                                        - Valid range is 0-255
-                                    type: int
-                                    required: true
-                                mask:
-                                    description:
-                                        - Mask value
-                                        - Valid range is 0-255
-                                    type: int
-                        neq:
-                            description: Match criteria is met if the packet is not equal to the specified value or mask.
-                            type: dict
-                            suboptions:
-                                value:
-                                    description:
-                                        - Value for which the packet must be in accordance with.
-                                        - Valid range is 0-255
-                                    type: int
-                                    required: true
-                                mask:
-                                    description:
-                                        - Mask value
-                                        - Valid range is 0-255
-                                    type: int
-                        gt:
-                            description:
-                                - Match criteria is met if the packet is greater than the specified value.
-                                - Valid range is 0-255
-                            type: int
-                        lt:
-                            description:
-                                - Match criteria is met if the packet is less than the specified value.
-                                - Valid range is 0-255
-                            type: int
-                        range:
-                            description: Match critera is based upon a lower and upper boundary protocol field range.
-                            type: dict
-                            suboptions:
-                                lower_boundary:
-                                    description: Acceptable range is 0-255
-                                    type: int
-                                    required: true
-                                upper_boundary:
-                                    description: Acceptable range is 0-255
-                                    type: int
-                                    required: true
-                        regex:
-                            description: Match critera is based upon a string that is to be matched.
-                            type: str
                 traffic_category:
                     description: Match on traffic-category
                     type: str
                     choices:
                         - allow
                         - optimize
-                vlan_id:
+                vlan:
                     description:
                         - Use the VLAN IDas a match criterion.
                         - Valid from 1 to 4049
                     type: int
-                vlan_id_inner:
+                vlan_inner:
                     description:
-                        - Use the inner VLAN IDas a match criterion.
+                        - Use the inner VLAN ID as a match criterion.
                         - Valid from 1 to 4049
                     type: int
                 negate:

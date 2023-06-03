@@ -46,12 +46,74 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                 "class_type": {
                     "type": "str",
                     "default": "standard",
-                    "choices": ["access-control", "stack", "standard"],
+                    "choices": ["standard"],
                 },
                 "matches": {
                     "type": "list",
                     "elements": "dict",
-                    "mutually_exclusive": [["negate", "any"]],
+                    "mutually_exclusive": [
+                        ["negate", "any"],
+                        [
+                            "access_group",
+                            "any",
+                            "application",
+                            "application_attribute",
+                            "application_group",
+                            "cac_status",
+                            "class_map",
+                            "cos",
+                            "cos_inner",
+                            "destination_mac_address",
+                            "discard_class",
+                            "dscp",
+                            "object_group_security",
+                            "input_interface",
+                            "ip_precedence",
+                            "ip_rtp",
+                            "metadata",
+                            "mpls_experimental_topmost",
+                            "packet_length",
+                            "protocol",
+                            "protocol_attribute",
+                            "qos_group",
+                            "security_group",
+                            "source_mac_address",
+                            "traffic_category",
+                            "vlan",
+                            "vlan_inner",
+                        ],
+                    ],
+                    "required_one_of": [
+                        [
+                            "access_group",
+                            "any",
+                            "application",
+                            "application_attribute",
+                            "application_group",
+                            "cac_status",
+                            "class_map",
+                            "cos",
+                            "cos_inner",
+                            "destination_mac_address",
+                            "discard_class",
+                            "dscp",
+                            "object_group_security",
+                            "input_interface",
+                            "ip_precedence",
+                            "ip_rtp",
+                            "metadata",
+                            "mpls_experimental_topmost",
+                            "packet_length",
+                            "protocol",
+                            "protocol_attribute",
+                            "qos_group",
+                            "security_group",
+                            "source_mac_address",
+                            "traffic_category",
+                            "vlan",
+                            "vlan_inner",
+                        ]
+                    ],
                     "options": {
                         "access_group": {
                             "type": "dict",
@@ -89,6 +151,15 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                         "application_attribute": {
                             "type": "dict",
                             "mutually_exclusive": [
+                                [
+                                    "category",
+                                    "device_class",
+                                    "media_type",
+                                    "sub_category",
+                                    "tcl",
+                                ]
+                            ],
+                            "required_one_of": [
                                 [
                                     "category",
                                     "device_class",
@@ -162,12 +233,12 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                 "dscp_values": {
                                     "type": "list",
                                     "required": True,
-                                    "elements": "int",
+                                    "elements": "str",
                                 },
                                 "ip_versions": {
                                     "type": "str",
-                                    "default": "IPv4-and-IPv6",
-                                    "choices": ["IPv4-and-IPv6", "IPv4"],
+                                    "default": "ipv4-and-ipv6",
+                                    "choices": ["ipv4-and-ipv6", "ipv4"],
                                 },
                             },
                         },
@@ -290,6 +361,16 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                     "multi_party_session_id",
                                 ]
                             ],
+                            "required_one_of": [
+                                [
+                                    "cac_status",
+                                    "called_uri",
+                                    "calling_uri",
+                                    "device_model",
+                                    "global_session_id",
+                                    "multi_party_session_id",
+                                ]
+                            ],
                             "options": {
                                 "cac_status": {
                                     "type": "str",
@@ -308,6 +389,7 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                         },
                         "packet_length": {
                             "type": "dict",
+                            "required_one_of": [["max", "min"]],
                             "options": {
                                 "max": {"type": "int"},
                                 "min": {"type": "int"},
@@ -366,63 +448,19 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                             "mutually_exclusive": [
                                 ["source_tag", "destination_tag"]
                             ],
+                            "required_one_of": [["source_tag", "destination_tag"]],
                             "options": {
                                 "source_tag": {"type": "int"},
                                 "destination_tag": {"type": "int"},
                             },
                         },
                         "source_mac_address": {"type": "str"},
-                        "start": {
-                            "type": "dict",
-                            "mutually_exclusive": [
-                                ["eq", "neq", "gt", "lt", "range", "regex"]
-                            ],
-                            "options": {
-                                "layer": {
-                                    "type": "str",
-                                    "required": True,
-                                    "choices": ["l2", "l3"],
-                                },
-                                "offset": {"type": "int", "required": True},
-                                "size": {"type": "int", "required": True},
-                                "eq": {
-                                    "type": "dict",
-                                    "options": {
-                                        "value": {"type": "int", "required": True},
-                                        "mask": {"type": "int"},
-                                    },
-                                },
-                                "neq": {
-                                    "type": "dict",
-                                    "options": {
-                                        "value": {"type": "int", "required": True},
-                                        "mask": {"type": "int"},
-                                    },
-                                },
-                                "gt": {"type": "int"},
-                                "lt": {"type": "int"},
-                                "range": {
-                                    "type": "dict",
-                                    "options": {
-                                        "lower_boundary": {
-                                            "type": "int",
-                                            "required": True,
-                                        },
-                                        "upper_boundary": {
-                                            "type": "int",
-                                            "required": True,
-                                        },
-                                    },
-                                },
-                                "regex": {"type": "str"},
-                            },
-                        },
                         "traffic_category": {
                             "type": "str",
                             "choices": ["allow", "optimize"],
                         },
-                        "vlan_id": {"type": "int"},
-                        "vlan_id_inner": {"type": "int"},
+                        "vlan": {"type": "int"},
+                        "vlan_inner": {"type": "int"},
                         "negate": {"type": "bool"},
                     },
                 },

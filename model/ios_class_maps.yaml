@@ -2,7 +2,7 @@ module: ios_class_maps
 short_description: Class-Maps resource module
 description:
     - This module configures and manages Class-Maps on IOS platforms.
-version_added: 0.01
+version_added: '0.01'
 author: Ambrus Fay (@fay-ambrus)
 notes:
     - Tested against Cisco IOSXE version 17.3 on CML.
@@ -50,7 +50,7 @@ options:
             description: A list of classification criteria.
             type: list
             elements: dict
-            mutually_exclusive: [[not, any]]
+            mutually_exclusive: [[negate, any]]
             suboptions:
                 access_group:
                     description:
@@ -523,7 +523,7 @@ options:
                         range:
                             description: Match critera is based upon a lower and upper boundary protocol field range.
                             type: dict
-                            suboption:
+                            suboptions:
                                 lower_boundary:
                                     description: Acceptable range is 0-255
                                     type: int

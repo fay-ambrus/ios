@@ -51,11 +51,12 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                 "matches": {
                     "type": "list",
                     "elements": "dict",
-                    "mutually_exclusive": [["not", "any"]],
+                    "mutually_exclusive": [["negate", "any"]],
                     "options": {
                         "access_group": {
                             "type": "dict",
                             "mutually_exclusive": [["name", "number"]],
+                            "required_one_of": [["name", "number"]],
                             "options": {
                                 "name": {"type": "str"},
                                 "number": {"type": "int"},
@@ -400,7 +401,19 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                 },
                                 "gt": {"type": "int"},
                                 "lt": {"type": "int"},
-                                "range": {"type": "dict"},
+                                "range": {
+                                    "type": "dict",
+                                    "options": {
+                                        "lower_boundary": {
+                                            "type": "int",
+                                            "required": True,
+                                        },
+                                        "upper_boundary": {
+                                            "type": "int",
+                                            "required": True,
+                                        },
+                                    },
+                                },
                                 "regex": {"type": "str"},
                             },
                         },

@@ -65,14 +65,12 @@ options:
             description: A list of classification criteria.
             type: list
             elements: dict
-            mutually_exclusive: [[not, any]]
             suboptions:
                 access_group:
                     description:
                         - Specifies match criteria for a class map on the basis of the specified access control list (ACL).
                         - Only available in standard class-maps.
                     type: dict
-                    mutually_exclusive: [[name, number]]
                     suboptions:
                         name:
                             description:
@@ -94,7 +92,6 @@ options:
                         - Match Medianet Flow traffic based on application name, source, vendor and version.
                         - Only available in standard class-maps.
                     type: dict
-                    mutually_exclusive: [[source, vendor, version]]
                     suboptions:
                         name:
                             description: Name of the application that the control plane classification engine must match.
@@ -122,7 +119,6 @@ options:
                         - Match Medianet Flow traffic based on a single Medianet metadata attribute.
                         - Only available in standard class-maps.
                     type: dict
-                    mutually_exclusive: [[category, device_class, media_type, sub_category, tcl]]
                     suboptions:
                         category:
                             description: Specifies the category type that the control plane classification engine must match.
@@ -362,7 +358,6 @@ options:
                 metadata:
                     description: Use call metadata as match criterion.
                     type: dict
-                    mutually_exclusive: [[cac_status, called_uri, calling_uri, device_model, global_session_id, multi_party_session_id]]
                     suboptions:
                         cac_status:
                             description: Call Admission Control
@@ -417,7 +412,6 @@ options:
                             type: str
                         subprotocol_parameter:
                             description: The subprotocol parameter to be used as a match criterion.
-                            required_together: [[subprotocol_parameter_name, subprotocol_parameter_value]]
                             type: dict
                             suboptions:
                                 subprotocol_parameter_name:
@@ -456,7 +450,6 @@ options:
                 security_group:
                     description: Security group to match.
                     type: dict
-                    mutually_exclusive: [[source_tag, destination_tag]]
                     suboptions:
                         source_tag:
                             description:
@@ -474,7 +467,6 @@ options:
                 start:
                     description: Configure match criteria on the basis of the datagram header (Layer 2 ) or the network header (Layer 3).
                     type: dict
-                    mutually_exclusive: [[eq, neq, gt, lt, range, regex]]
                     suboptions:
                         layer:
                             description: Determines the layer which the criterion will start from.
@@ -538,7 +530,7 @@ options:
                         range:
                             description: Match critera is based upon a lower and upper boundary protocol field range.
                             type: dict
-                            suboption:
+                            suboptions:
                                 lower_boundary:
                                     description: Acceptable range is 0-255
                                     type: int

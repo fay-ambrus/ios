@@ -49,7 +49,6 @@ class Class_maps(ResourceModule):
         self.parsers = [
             "class maps",
             "description",
-            "match vlan",
             "match access group",
             "match any",
             "match application",
@@ -58,7 +57,24 @@ class Class_maps(ResourceModule):
             "match class-map",
             "match cac status",
             "match cos",
-            "match cos inner"
+            "match cos inner",
+            "match destination mac",
+            "match discard class",
+            "match object-group security",
+            "match input-interface",
+            "match ip dscp",
+            "match ip rtp",
+            "match metadata",
+            "match mpls experimental",
+            "match packet length",
+            "match protocol attribute",
+            "match protocol",
+            "match qos group",
+            "match security group",
+            "match source mac",
+            "match vlan",
+            "match vlan inner",
+            "match traffic category"
         ]
 
     def execute_module(self):
@@ -126,9 +142,25 @@ class Class_maps(ResourceModule):
             # specific validation has to be done here
             if wm.get("cos"):
                 wm["cos"] = list(set(wm.get("cos")))
+                wm["cos"].sort()
 
             if wm.get("cos_inner"):
                 wm["cos_inner"] = list(set(wm.get("cos_inner")))
+                wm["cos_inner"].sort()
+
+            if wm.get("destination_mac_address"):
+                wm["destination_mac_address"] = wm.get("destination_mac_address").upper().replace(':', '.')
+
+            if wm.get("dscp"):
+                wm["dscp"]["dscp_values"] = list(set(wm.get("dscp").get("dscp_values")))
+                wm["dscp"]["dscp_values"].sort()
+
+            if wm.get("mpls_experimental_topmost"):
+                wm["mpls_experimental_topmost"] = list(set(wm.get("mpls_experimental_topmost")))
+                wm["mpls_experimental_topmost"].sort()
+
+            if wm.get("source_mac_address"):
+                wm["source_mac_address"] = wm.get("source_mac_address").upper().replace(':', '.')
 
             hm = {}
             if have_matches.count(wm) > 0:

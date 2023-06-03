@@ -99,7 +99,7 @@ class Class_mapsFacts(object):
 
                     if match.get("cos_inner"):
                         cos_values = match.get("cos_inner")
-                        match["cos inner"] = list(filter(lambda v: v != None, cos_values))
+                        match["cos_inner"] = list(filter(lambda v: v != None, cos_values))
 
                     if match.get("dscp"):
                         dscp = match.get("dscp")

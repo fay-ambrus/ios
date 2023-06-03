@@ -66,6 +66,7 @@ options:
             description: A list of classification criteria.
             type: list
             elements: dict
+            mutually_exclusive: [[not, any]]
             suboptions:
                 access_group:
                     description:
@@ -201,7 +202,7 @@ options:
                 destination_mac_address:
                     description:
                         - Use the destination MAC address as a match criterion
-                        - address format must be formatted as 00:00:00:00:00:00
+                        - Address must be formatted as 0000:0000:0000
                         - Only available in standard class-maps.
                     type: str
                 discard_class:
@@ -253,7 +254,7 @@ options:
                         - Only available in standard class-maps.
                     type: dict
                     suboptions:
-                        interface_name:
+                        interface_type:
                             description: Name of the input interface to be used as match criteria.
                             type: str
                             required: true
@@ -362,8 +363,14 @@ options:
                 metadata:
                     description: Use call metadata as match criterion.
                     type: dict
-                    mutually_exclusive: [[cac_status, called_uri, caller_uri, device_model, global_session_id, multi_party_session_id]]
+                    mutually_exclusive: [[cac_status, called_uri, calling_uri, device_model, global_session_id, multi_party_session_id]]
                     suboptions:
+                        cac_status:
+                            description: Call Admission Control
+                            type: str
+                            choices:
+                                - admitted
+                                - un-admitted
                         called_uri:
                             description: Called URI
                             type: str
@@ -428,6 +435,16 @@ options:
                             description: Name of the protocol attribute to be used as a match criterion
                             required: true
                             type: str
+                            choices:
+                                - application-family
+                                - application-group
+                                - application-set
+                                - business-relevance
+                                - category
+                                - encrypted
+                                - sub-category
+                                - traffic-class
+                                - tunnel
                         attribute_value:
                             description: The value of the protocol attribute to be used as a match criterion
                             required: true

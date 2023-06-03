@@ -51,6 +51,7 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                 "matches": {
                     "type": "list",
                     "elements": "dict",
+                    "mutually_exclusive": [["not", "any"]],
                     "options": {
                         "access_group": {
                             "type": "dict",
@@ -183,7 +184,7 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                         "input_interface": {
                             "type": "dict",
                             "options": {
-                                "interface_name": {
+                                "interface_type": {
                                     "type": "str",
                                     "required": True,
                                     "choices": [
@@ -282,13 +283,17 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                 [
                                     "cac_status",
                                     "called_uri",
-                                    "caller_uri",
+                                    "calling_uri",
                                     "device_model",
                                     "global_session_id",
                                     "multi_party_session_id",
                                 ]
                             ],
                             "options": {
+                                "cac_status": {
+                                    "type": "str",
+                                    "choices": ["admitted", "un-admitted"],
+                                },
                                 "called_uri": {"type": "str"},
                                 "calling_uri": {"type": "str"},
                                 "device_model": {"type": "str"},
@@ -336,6 +341,17 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                                 "attribute_name": {
                                     "required": True,
                                     "type": "str",
+                                    "choices": [
+                                        "application-family",
+                                        "application-group",
+                                        "application-set",
+                                        "business-relevance",
+                                        "category",
+                                        "encrypted",
+                                        "sub-category",
+                                        "traffic-class",
+                                        "tunnel",
+                                    ],
                                 },
                                 "attribute_value": {
                                     "required": True,

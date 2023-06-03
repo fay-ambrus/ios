@@ -53,6 +53,7 @@ DSCP_VALUES = {
     "ef": 46
 }
 
+
 class Class_mapsFacts(object):
     """ The ios class_maps facts class
     """
@@ -95,24 +96,24 @@ class Class_mapsFacts(object):
                 for match in matches:
                     if match.get("cos"):
                         cos_values = match.get("cos")
-                        match["cos"] = list(filter(lambda v: v != None, cos_values))
+                        match["cos"] = list(filter(lambda v: v is not None, cos_values))
 
                     if match.get("cos_inner"):
                         cos_values = match.get("cos_inner")
-                        match["cos_inner"] = list(filter(lambda v: v != None, cos_values))
+                        match["cos_inner"] = list(filter(lambda v: v is not None, cos_values))
 
                     if match.get("dscp"):
                         dscp = match.get("dscp")
                         if dscp.get("dscp_values"):
                             dscp_values = dscp.get("dscp_values")
                             for i in range(len(dscp_values)):
-                                if DSCP_VALUES.get(dscp_values[i], None) != None:
+                                if DSCP_VALUES.get(dscp_values[i], None) is not None:
                                     dscp_values[i] = DSCP_VALUES.get(dscp_values[i])
-                            dscp["dscp_values"] = list(filter(lambda v: v != None, dscp_values))
+                            dscp["dscp_values"] = list(filter(lambda v: v is not None, dscp_values))
 
                     if match.get("mpls_experimental_topmost"):
                         mpls_values = match.get("mpls_experimental_topmost")
-                        match["mpls_experimental_topmost"] = list(filter(lambda v: v != None, mpls_values))
+                        match["mpls_experimental_topmost"] = list(filter(lambda v: v is not None, mpls_values))
 
         params = utils.remove_empties(
             class_maps_parser.validate_config(self.argument_spec, {"config": objs}, redact=True)

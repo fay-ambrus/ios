@@ -19,6 +19,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     NetworkTemplate,
 )
 
+
 class Class_mapsTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(Class_mapsTemplate, self).__init__(lines=lines, tmplt=self, module=module)
@@ -35,10 +36,10 @@ class Class_mapsTemplate(NetworkTemplate):
                 re.VERBOSE),
             "result": {
                 "{{ class_map_name|d() }}": {
-                        "class_map_type": "{{ class_map_type }}",
-                        "name": "{{ class_map_name }}",
-                        "match_type": "{{ match_type }}"
-                    }
+                    "class_map_type": "{{ class_map_type }}",
+                    "name": "{{ class_map_name }}",
+                    "match_type": "{{ match_type }}"
+                }
             },
             "setval": "class-map {{ match_type if match_type is defined else '' }} {{ name }}",
             "compval": "name",
@@ -158,13 +159,13 @@ class Class_mapsTemplate(NetworkTemplate):
                     ]
                 }
             },
-            "compval":  "application_attribute",
+            "compval": "application_attribute",
             "setval": "match {{ 'not' if negate is defined and negate else '' }} application attribute "
-            "{{ 'category ' + application_attribute.category if application_attribute.category is defined }}"            
+            "{{ 'category ' + application_attribute.category if application_attribute.category is defined }}"
             "{{ 'device-class ' + application_attribute.device_class if application_attribute.device_class is defined }}"
             "{{ 'media-type ' + application_attribute.media_type if application_attribute.media_type is defined }}"
             "{{ 'sub-category ' + application_attribute.sub_category if application_attribute.sub_category is defined }}"
-            "{{ 'tcl ' + application_attribute.tcl if application_attribute.tcl is defined }}"            
+            "{{ 'tcl ' + application_attribute.tcl if application_attribute.tcl is defined }}"
         },
         {
             "name": "match application group",
@@ -259,7 +260,7 @@ class Class_mapsTemplate(NetworkTemplate):
                                 "{{ cos_val_5 if cos_val_5 is defined else None }}",
                                 "{{ cos_val_6 if cos_val_6 is defined else None }}",
                                 "{{ cos_val_7 if cos_val_7 is defined else None }}"
-                            ],  
+                            ],
                             "negate": "{{ not not negate }}"
                         }
                     ]
@@ -290,7 +291,7 @@ class Class_mapsTemplate(NetworkTemplate):
                                 "{{ cos_inner_val_1 if cos_inner_val_1 is defined else None }}",
                                 "{{ cos_inner_val_2 if cos_inner_val_2 is defined else None }}",
                                 "{{ cos_inner_val_3 if cos_inner_val_3 is defined else None }}",
-                            ],  
+                            ],
                             "negate": "{{ not not negate }}"
                         }
                     ]
@@ -324,7 +325,7 @@ class Class_mapsTemplate(NetworkTemplate):
             "{{ destination_mac_address }}"
         },
         {
-        "name": "match discard class",
+            "name": "match discard class",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
                     \sdiscard-class
@@ -346,7 +347,7 @@ class Class_mapsTemplate(NetworkTemplate):
             "{{ discard_class }}"
         },
         {
-        "name": "match object-group security",
+            "name": "match object-group security",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
                     \sgroup-object
@@ -373,7 +374,7 @@ class Class_mapsTemplate(NetworkTemplate):
             "{{ object_group_security.endpoint }} {{ object_group_security.name }}"
         },
         {
-        "name": "match input-interface",
+            "name": "match input-interface",
             "getval": re.compile(
                 r"""^\s*match(\s(?P<negate>not))?
                     \sinput-interface
@@ -416,7 +417,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "dscp":{
+                            "dscp": {
                                 "dscp_values": [
                                     "{{ dscp_val_0 if dscp_val_0 is defined else None }}",
                                     "{{ dscp_val_1 if dscp_val_1 is defined else None }}",
@@ -427,7 +428,7 @@ class Class_mapsTemplate(NetworkTemplate):
                                     "{{ dscp_val_6 if dscp_val_6 is defined else None }}",
                                     "{{ dscp_val_7 if dscp_val_7 is defined else None }}"
                                 ]
-                            },  
+                            },
                             "negate": "{{ not not negate }}"
                         }
                     ]
@@ -453,7 +454,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "dscp":{
+                            "dscp": {
                                 "dscp_values": [
                                     "{{ dscp_val_0 if dscp_val_0 is defined else None }}",
                                     "{{ dscp_val_1 if dscp_val_1 is defined else None }}",
@@ -465,7 +466,7 @@ class Class_mapsTemplate(NetworkTemplate):
                                     "{{ dscp_val_7 if dscp_val_7 is defined else None }}"
                                 ],
                                 "ip_versions": "IPv4"
-                            },  
+                            },
                             "negate": "{{ not not negate }}"
                         }
                     ]
@@ -474,7 +475,7 @@ class Class_mapsTemplate(NetworkTemplate):
             "compval": "dscp",
             "setval": "match {{ 'not' if negate is defined and negate else '' }}"
             "{{ ' ip' if dscp.ip_versions == 'IPv4' }} dscp"
-            "{% for dscp_value in dscp.dscp_values %} {{ dscp_value }}{% endfor %}"       
+            "{% for dscp_value in dscp.dscp_values %} {{ dscp_value }}{% endfor %}"
         },
         {
             "name": "match ip rtp",
@@ -501,7 +502,7 @@ class Class_mapsTemplate(NetworkTemplate):
             },
             "compval": "ip_rtp",
             "setval": "match {{ 'not' if negate is defined and negate else '' }}"
-            "ip rtp {{ ip_rtp.starting_port_number }} {{ ip_rtp.port_range }}"     
+            "ip rtp {{ ip_rtp.starting_port_number }} {{ ip_rtp.port_range }}"
         },
         {
             "name": "match metadata",
@@ -569,7 +570,7 @@ class Class_mapsTemplate(NetworkTemplate):
             },
             "compval": "mpls_experimental_topmost",
             "setval": "match{{ ' not' if negate is defined and negate else '' }} mpls experimental topmost"
-            "{% for mpls_val in mpls_experimental_topmost %} {{ mpls_val }}{% endfor %}"  
+            "{% for mpls_val in mpls_experimental_topmost %} {{ mpls_val }}{% endfor %}"
         },
         {
             "name": "match packet length",
@@ -595,7 +596,7 @@ class Class_mapsTemplate(NetworkTemplate):
             },
             "compval": "packet_length",
             "setval": "match{{ ' not' if negate is defined and negate else '' }} packet length"
-            "{{ ' min ' + packet_length.min|string if packet_length.min is defined }}"  
+            "{{ ' min ' + packet_length.min|string if packet_length.min is defined }}"
             "{{ ' max ' + packet_length.max|string if packet_length.max is defined }}"
         },
         {
@@ -614,7 +615,7 @@ class Class_mapsTemplate(NetworkTemplate):
                         {
                             "protocol_attribute": {
                                 "attribute_name": "{{ attribute_name }}",
-                                "attribute_value":  "{{ attribute_value }}"
+                                "attribute_value": "{{ attribute_value }}"
                             },
                             "negate": "{{ not not negate }}"
                         }
@@ -641,7 +642,7 @@ class Class_mapsTemplate(NetworkTemplate):
                         {
                             "protocol": {
                                 "protocol_name": "{{ protocol_name }}",
-                                "subprotocol_parameter":  {
+                                "subprotocol_parameter": {
                                     "subprotocol_parameter_name": "{{ subprotocol_parameter_name }}",
                                     "subprotocol_parameter_value": "{{ subprotocol_parameter_value }}"
                                 }

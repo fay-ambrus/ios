@@ -121,7 +121,7 @@ class Class_maps(ResourceModule):
            the `want` and `have` data with the `parsers` defined
            for the Class_maps network resource.
         """
-        
+
         begin = len(self.commands)
 
         # first of all, compare the class-map headers
@@ -135,8 +135,6 @@ class Class_maps(ResourceModule):
 
         if have and have.get("matches"):
             have_matches = have.get("matches")
-
-        # raise RuntimeError(str(want_matches) + "/////" + str(have_matches))
 
         for wm in want_matches:
             # specific validation has to be done here
@@ -166,8 +164,6 @@ class Class_maps(ResourceModule):
             if have_matches.count(wm) > 0:
                 hm = have_matches[have_matches.index(wm)]
             self.compare(parsers=self.parsers, want=wm, have=hm)
-
-        # raise RuntimeError(self.commands)
 
         # remove "no description" command, if the class-map has been deleted in advance
         if begin + 1 < len(self.commands):

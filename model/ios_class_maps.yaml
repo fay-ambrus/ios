@@ -38,9 +38,8 @@ options:
         class_type:
             description:
                 - Specifies the class-map type.
-                - This Ansible module at this moment only support class-maps of types access-control, stack and standard, with plans to add support for other types at a later stages.
+                - This Ansible module at this moment only support class-maps ofstandard type.
                 - Please note, that certain matching criteria might be only available in a specific type of class-map.
-                - To check, wheter the matching criterion you want to use is available in a certain class-map type, check the matching criterion description, or refer to your manual.
             type: str
             default: standard
             choices:
@@ -537,7 +536,7 @@ options:
                             description: Match critera is based upon a string that is to be matched.
                             type: str
                 traffic_category:
-                    description: 
+                    description: Match on traffic-category
                     type: str
                     choices:
                         - allow

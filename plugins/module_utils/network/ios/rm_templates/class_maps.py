@@ -82,7 +82,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "access_group",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} access-group "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} access-group "
             "{{ access_group.number if access_group.number is defined else 'name ' + access_group.name }}",
         },
         {
@@ -131,7 +131,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 },
             },
             "compval": "application",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} application "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} application "
             "{{ application.name }} "
             "{{ 'source ' + application.source if application.source is defined }}"
             "{{ 'vendor ' + application.vendor if application.vendor is defined }}"
@@ -160,7 +160,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "application_attribute",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} application attribute "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} application attribute "
             "{{ 'category ' + application_attribute.category if application_attribute.category is defined }}"
             "{{ 'device-class ' + application_attribute.device_class if application_attribute.device_class is defined }}"
             "{{ 'media-type ' + application_attribute.media_type if application_attribute.media_type is defined }}"
@@ -187,7 +187,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "application_group",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} application application-group {{ application_group }}"
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} application application-group {{ application_group }}"
         },
         {
             "name": "match class-map",
@@ -208,7 +208,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "class_map",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} class-map {{ class_map }}"
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} class-map {{ class_map }}"
         },
         {
             "name": "match cac status",
@@ -230,7 +230,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "cac_status",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} cac status {{ cac_status }}"
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} cac status {{ cac_status }}"
         },
         {
             "name": "match cos",
@@ -267,7 +267,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "cos",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} cos"
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} cos"
             "{% for cos_value in cos %} {{ cos_value }}{% endfor %}"
         },
         {
@@ -298,7 +298,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "cos_inner",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} cos inner"
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} cos inner"
             "{% for cos_inner_value in cos_inner %} {{ cos_inner_value }}{% endfor %}"
         },
         {
@@ -321,7 +321,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "destination_mac_address",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} destination-address mac "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} destination-address mac "
             "{{ destination_mac_address }}"
         },
         {
@@ -343,7 +343,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "discard_class",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} discard-class "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} discard-class "
             "{{ discard_class }}"
         },
         {
@@ -370,7 +370,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "object_group_security",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} group-object security "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} group-object security "
             "{{ object_group_security.endpoint }} {{ object_group_security.name }}"
         },
         {
@@ -395,7 +395,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "input_interface",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} input-interface "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} input-interface "
             "{{ input_interface.interface_type }} {{ input_interface.interface_number }}"
         },
         {
@@ -473,7 +473,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "dscp",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }}"
+            "setval": "match{{ ' not' if negate is defined and negate else '' }}"
             "{{ ' ip' if dscp.ip_versions == 'IPv4' }} dscp"
             "{% for dscp_value in dscp.dscp_values %} {{ dscp_value }}{% endfor %}"
         },
@@ -501,7 +501,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "ip_rtp",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }}"
+            "setval": "match{{ ' not' if negate is defined and negate else '' }}"
             "ip rtp {{ ip_rtp.starting_port_number }} {{ ip_rtp.port_range }}"
         },
         {
@@ -526,7 +526,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "metadata",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} metadata "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} metadata "
             "{{ 'cac status ' + metadata.cac_status if metadata.cac_status is defined }}"
             "{{ 'called-uri ' + metadata.called_uri if metadata.called_uri is defined }}"
             "{{ 'calling-uri ' + metadata.calling_uri if metadata.calling_uri is defined }}"
@@ -726,7 +726,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "source_mac_address",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} source-address mac "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} source-address mac "
             "{{ source_mac_address }}"
         },
         {
@@ -782,7 +782,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "vlan_id",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} "
             "vlan {{ vlan_id }}",
         },
         {
@@ -805,7 +805,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "vlan_id_inner",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} "
             "vlan inner {{ vlan_id_inner }}",
         },
         {
@@ -827,7 +827,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "traffic_category",
-            "setval": "match {{ 'not' if negate is defined and negate else '' }} "
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} "
             "traffic-category {{ traffic_category }}",
         },
     ]

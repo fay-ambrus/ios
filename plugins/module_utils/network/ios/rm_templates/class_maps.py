@@ -24,6 +24,29 @@ class Class_mapsTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(Class_mapsTemplate, self).__init__(lines=lines, tmplt=self, module=module)
 
+    DSCP_VALUES = {
+        "af11": "40",
+        "af12": "12",
+        "af13": "14",
+        "af21": "18",
+        "af22": "20",
+        "af23": "22",
+        "af31": "26",
+        "af32": "28",
+        "af33": "30",
+        "af41": "34",
+        "af42": "36",
+        "af43": "38",
+        "cs1": "8",
+        "cs2": "16",
+        "cs3": "24",
+        "cs4": "32",
+        "cs5": "40",
+        "cs6": "48",
+        "cs7": "56",
+        "default": "0",
+        "ef": "46"
+    }
     # fmt: off
     PARSERS = [
         {

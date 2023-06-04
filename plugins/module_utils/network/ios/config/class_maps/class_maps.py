@@ -150,7 +150,11 @@ class Class_maps(ResourceModule):
                 wm["destination_mac_address"] = wm.get("destination_mac_address").upper().replace(':', '.')
 
             if wm.get("dscp"):
-                wm["dscp"]["dscp_values"] = list(set(wm.get("dscp").get("dscp_values")))
+                dscp_values = wm.get("dscp").get("dscp_values")
+                for i in range(len(dscp_values)):
+                    if Class_mapsTemplate.DSCP_VALUES.get(dscp_values[i], None) is not None:
+                        dscp_values[i] = Class_mapsTemplate.DSCP_VALUES.get(dscp_values[i])
+                wm["dscp"]["dscp_values"] = list(set(filter(lambda v: v is not None, dscp_values)))
                 wm["dscp"]["dscp_values"].sort()
 
             if wm.get("mpls_experimental_topmost"):

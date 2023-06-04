@@ -158,58 +158,60 @@ class TestIosClassMapsModule(TestIosModule):
         ]
         self.assertEqual(sorted(result["commands"]), sorted(commands))
 
-    # def test_ios_acls_merged_idempotent(self):
-    #     self.execute_show_command.return_value = dedent(
-    #         """\
-    #         Standard IP access list test_acl
-    #         Extended IP access list 110
-    #             10 permit tcp 198.51.100.0 0.0.0.255 any eq 22 log (tag = testLog)
-    #             20 deny icmp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 dscp ef ttl eq 10
-    #             30 deny icmp object-group test_network_og any dscp ef ttl eq 10
-    #         IPv6 access list R1_TRAFFIC
-    #             deny tcp any eq www any eq telnet ack dscp af11 sequence 10
-    #         """,
-    #     )
+    def test_ios_class_maps_merged_idempotent(self):
+        self.execute_show_command.return_value = dedent(
+            """\
+                Current configuration : 305 bytes
+                !
+                Configuration of Partition - class-map 
+                !
+                !
+                !
+                !
+                !
+                !
+                class-map match-all test-class1
+                class-map match-all test-class3
+                 match dscp default  cs1  af31  cs7  60 
+                class-map match-all test-class2
+                 match discard-class 0
+                 match security-group destination tag 100
+                 match input-interface GigabitEthernet3
+                !
+                !
+                end
+            """
+        )
 
-    #     set_module_args(
-    #         dict(
-    #             config=[
-    #                 {
-    #                     "afi": "ipv4",
-    #                     "acls": [
-    #                         {"name": "110", "acl_type": "extended"},
-    #                         {"name": "test_acl", "acl_type": "standard"},
-    #                     ],
-    #                 },
-    #                 {
-    #                     "afi": "ipv6",
-    #                     "acls": [
-    #                         {
-    #                             "name": "R1_TRAFFIC",
-    #                             "aces": [
-    #                                 {
-    #                                     "sequence": 10,
-    #                                     "grant": "deny",
-    #                                     "protocol": "tcp",
-    #                                     "source": {"any": True, "port_protocol": {"eq": "www"}},
-    #                                     "destination": {
-    #                                         "any": True,
-    #                                         "port_protocol": {"eq": "telnet"},
-    #                                     },
-    #                                     "dscp": "af11",
-    #                                     "protocol_options": {"tcp": {"ack": True}},
-    #                                 },
-    #                             ],
-    #                         },
-    #                     ],
-    #                 },
-    #             ],
-    #             state="merged",
-    #         ),
-    #     )
-    #     result = self.execute_module(changed=False)
-    #     self.assertEqual(sorted(result["commands"]), [])
-    #     # self.execute_module(changed=False, commands=[], sort=True)
+        module_args = {
+            "config": [
+                {
+                    "name": "test-class1",
+                    "match_type": "match-all",
+                },
+                {
+                    "name": "test-class2",
+                    "class_type": "standard",
+                    "match_type": "match-all",
+                },
+                {
+                    "name": "test-class3",
+                    "matches": [
+                        {
+                            "dscp": {
+                                "dscp_values": [ "8", "0", "56", "af31", "60", "cs1"],
+                                "ip_versions": "ipv4-and-ipv6"
+                            },
+                        }
+                    ]
+                },
+            ],
+            "state": "merged"
+        }
+        set_module_args(module_args)
+        result = self.execute_module(changed=False)
+        self.assertEqual(sorted(result["commands"]), [])
+        # self.execute_module(changed=False, commands=[], sort=True)
 
     # def test_ios_acls_replaced(self):
     #     self.execute_show_command.return_value = dedent(

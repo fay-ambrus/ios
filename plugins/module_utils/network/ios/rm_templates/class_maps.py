@@ -829,7 +829,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "vlan_id": "{{ id }}",
+                            "vlan": "{{ id }}",
                             "negate": "{{ not not negate }}"
                         }
                     ]
@@ -852,7 +852,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 "{{ class_map_name|d() }}": {
                     "matches": [
                         {
-                            "vlan_id_inner": "{{ id }}",
+                            "vlan_inner": "{{ id }}",
                             "negate": "{{ not not negate }}"
                         }
                     ]

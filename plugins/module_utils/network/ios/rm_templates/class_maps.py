@@ -488,7 +488,7 @@ class Class_mapsTemplate(NetworkTemplate):
                                     "{{ dscp_val_6 if dscp_val_6 is defined else None }}",
                                     "{{ dscp_val_7 if dscp_val_7 is defined else None }}"
                                 ],
-                                "ip_versions": "IPv4"
+                                "ip_versions": "ipv4"
                             },
                             "negate": "{{ not not negate }}"
                         }
@@ -497,8 +497,39 @@ class Class_mapsTemplate(NetworkTemplate):
             },
             "compval": "dscp",
             "setval": "match{{ ' not' if negate is defined and negate else '' }}"
-            "{{ ' ip' if dscp.ip_versions == 'IPv4' }} dscp"
+            "{{ ' ip' if dscp.ip_versions == 'ipv4' }} dscp"
             "{% for dscp_value in dscp.dscp_values %} {{ dscp_value }}{% endfor %}"
+        },
+        {
+            "name": "match ip precedence",
+            "getval": re.compile(
+                r"""^\s*match(\s(?P<negate>not))?
+                    \sip
+                    \sprecedence
+                    \s* (?P<precedence_val_0>\d)
+                    (\s*(?P<precedence_val_1>\d))?
+                    (\s*(?P<precedence_val_2>\d))?
+                    (\s*(?P<precedence_val_3>\d))?
+                \s*$""",
+                re.VERBOSE),
+            "result": {
+                "{{ class_map_name|d() }}": {
+                    "matches": [
+                        {
+                            "ip_precedence": [
+                                "{{ precedence_val_0 if precedence_val_0 is defined else None }}",
+                                "{{ precedence_val_1 if precedence_val_1 is defined else None }}",
+                                "{{ precedence_val_2 if precedence_val_2 is defined else None }}",
+                                "{{ precedence_val_3 if precedence_val_3 is defined else None }}",
+                            ],
+                            "negate": "{{ not not negate }}"
+                        }
+                    ]
+                }
+            },
+            "compval": "ip_precedence",
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} ip precedence"
+            "{% for precedence_value in ip_precedence %} {{ precedence_value }}{% endfor %}"
         },
         {
             "name": "match ip rtp",
@@ -524,7 +555,7 @@ class Class_mapsTemplate(NetworkTemplate):
                 }
             },
             "compval": "ip_rtp",
-            "setval": "match{{ ' not' if negate is defined and negate else '' }}"
+            "setval": "match{{ ' not' if negate is defined and negate else '' }} "
             "ip rtp {{ ip_rtp.starting_port_number }} {{ ip_rtp.port_range }}"
         },
         {

@@ -87,6 +87,10 @@ class Class_mapsFacts(object):
                         match["dscp"]["dscp_values"] = list(filter(lambda v: v is not None, dscp_values))
                         match["dscp"]["dscp_values"].sort()
 
+                    if match.get("ip_precedence"):
+                        ip_precedence_values = match.get("ip_precedence")
+                        match["ip_precedence"] = list(filter(lambda v: v is not None, ip_precedence_values))
+
                     if match.get("mpls_experimental_topmost"):
                         mpls_values = match.get("mpls_experimental_topmost")
                         match["mpls_experimental_topmost"] = list(filter(lambda v: v is not None, mpls_values))

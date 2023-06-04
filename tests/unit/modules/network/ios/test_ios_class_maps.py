@@ -213,69 +213,61 @@ class TestIosClassMapsModule(TestIosModule):
         self.assertEqual(sorted(result["commands"]), [])
         # self.execute_module(changed=False, commands=[], sort=True)
 
-    # def test_ios_acls_replaced(self):
-    #     self.execute_show_command.return_value = dedent(
-    #         """\
-    #         Standard IP access list test_acl
-    #         Extended IP access list 110
-    #             10 permit tcp 198.51.100.0 0.0.0.255 any eq 22 log (tag = testLog)
-    #             20 deny icmp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 echo dscp ef ttl eq 10
-    #             30 deny icmp object-group test_network_og any dscp ef ttl eq 10
-    #         IPv6 access list R1_TRAFFIC
-    #             deny tcp any eq www any eq telnet ack dscp af11 sequence 10
-    #         ip access-list standard test_acl
-    #             remark remark check 1
-    #             remark some random remark 2
-    #         """,
-    #     )
+    def test_ios_class_maps_replaced(self):
+        self.execute_show_command.return_value = dedent(
+            """
+                Current configuration : 348 bytes
+                !
+                Configuration of Partition - class-map 
+                !
+                !
+                !
+                !
+                !
+                !
+                class-map match-all test-class1
+                  description This is a test description.
+                class-map match-any test-class2
+                 match ip dscp default  7  af11  af23  af41  43  63 
+                 match ip precedence 5 
+                 match ip rtp 3000 1000
+                !
+                !
+                end
+            """
+        )
 
-    #     set_module_args(
-    #         dict(
-    #             config=[
-    #                 dict(
-    #                     afi="ipv4",
-    #                     acls=[
-    #                         dict(
-    #                             name="replace_acl",
-    #                             acl_type="extended",
-    #                             aces=[
-    #                                 dict(
-    #                                     grant="deny",
-    #                                     protocol_options=dict(tcp=dict(ack="true")),
-    #                                     source=dict(
-    #                                         address="198.51.100.0",
-    #                                         wildcard_bits="0.0.0.255",
-    #                                     ),
-    #                                     destination=dict(
-    #                                         address="198.51.101.0",
-    #                                         wildcard_bits="0.0.0.255",
-    #                                         port_protocol=dict(eq="telnet"),
-    #                                     ),
-    #                                     tos=dict(min_monetary_cost=True),
-    #                                 ),
-    #                             ],
-    #                         ),
-    #                         dict(
-    #                             name="test_acl",
-    #                             acl_type="standard",
-    #                             aces=[dict(remarks=["Another remark here"])],
-    #                         ),
-    #                     ],
-    #                 ),
-    #             ],
-    #             state="replaced",
-    #         ),
-    #     )
-    #     result = self.execute_module(changed=True)
-    #     commands = [
-    #         "ip access-list extended replace_acl",
-    #         "deny tcp 198.51.100.0 0.0.0.255 198.51.101.0 0.0.0.255 eq telnet ack tos min-monetary-cost",
-    #         "ip access-list standard test_acl",
-    #         "remark Another remark here",
-    #         "no remark remark check 1",
-    #         "no remark some random remark 2",
-    #     ]
-    #     self.assertEqual(sorted(result["commands"]), sorted(commands))
+        module_args = {
+            "config": [
+                {
+                    "name": "test-class2",
+                    "class_type": "standard",
+                    "match_type": "match-any",
+                    "description": "This is another test description.",
+                    "matches": [
+                        {
+                            "metadata":  {
+                                "called_uri": "this_is_a_test_uri.test"
+                            },
+                            "negate": True
+                        }
+                    ]
+                },
+            ],
+            "state": "replaced"
+        }
+
+        set_module_args(module_args)
+        result = self.execute_module(changed=True)
+        commands = [
+            "class-map match-any test-class2",
+            "description This is another test description.",
+            "no match ip dscp 0 22 34 40 43 63 7",
+            "no match ip precedence 5",
+            "no match ip rtp 3000 1000",
+            "match not metadata called-uri this_is_a_test_uri.test"
+        ]
+        self.assertEqual(sorted(result["commands"]), sorted(commands))
 
     # def test_ios_acls_replaced_idempotent(self):
     #     self.execute_show_command.return_value = dedent(

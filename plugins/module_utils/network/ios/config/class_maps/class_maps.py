@@ -63,6 +63,7 @@ class Class_maps(ResourceModule):
             "match object-group security",
             "match input-interface",
             "match ip dscp",
+            "match ip precedence",
             "match ip rtp",
             "match metadata",
             "match mpls experimental",
@@ -137,36 +138,16 @@ class Class_maps(ResourceModule):
             have_matches = have.get("matches")
 
         for wm in want_matches:
-            # specific validation has to be done here
-            if wm.get("cos"):
-                wm["cos"] = list(set(wm.get("cos")))
-                wm["cos"].sort()
-
-            if wm.get("cos_inner"):
-                wm["cos_inner"] = list(set(wm.get("cos_inner")))
-                wm["cos_inner"].sort()
-
-            if wm.get("destination_mac_address"):
-                wm["destination_mac_address"] = wm.get("destination_mac_address").upper().replace(':', '.')
-
-            if wm.get("dscp"):
-                dscp_values = wm.get("dscp").get("dscp_values")
-                for i in range(len(dscp_values)):
-                    if Class_mapsTemplate.DSCP_VALUES.get(dscp_values[i], None) is not None:
-                        dscp_values[i] = Class_mapsTemplate.DSCP_VALUES.get(dscp_values[i])
-                wm["dscp"]["dscp_values"] = list(set(filter(lambda v: v is not None, dscp_values)))
-                wm["dscp"]["dscp_values"].sort()
-
-            if wm.get("mpls_experimental_topmost"):
-                wm["mpls_experimental_topmost"] = list(set(wm.get("mpls_experimental_topmost")))
-                wm["mpls_experimental_topmost"].sort()
-
-            if wm.get("source_mac_address"):
-                wm["source_mac_address"] = wm.get("source_mac_address").upper().replace(':', '.')
-
+            self._validate_match(wm)
             hm = {}
             if have_matches.count(wm) > 0:
                 hm = have_matches[have_matches.index(wm)]
+            self.compare(parsers=self.parsers, want=wm, have=hm)
+
+        for hm in have_matches:
+            wm = {}
+            if want_matches.count(hm) > 0:
+                wm = want_matches[want_matches.index(hm)]
             self.compare(parsers=self.parsers, want=wm, have=hm)
 
         # remove "no description" command, if the class-map has been deleted in advance
@@ -179,3 +160,34 @@ class Class_maps(ResourceModule):
             if not self.commands[begin].startswith("class-map") and not self.commands[begin].startswith("no class-map"):
                 class_map_cmd = "class-map {0} {1}".format(want["match_type"], want["name"])
                 self.commands.insert(begin, class_map_cmd)
+
+    def _validate_match(self, match):
+        if match.get("cos"):
+            match["cos"] = list(set(match.get("cos")))
+            match["cos"].sort()
+
+        if match.get("cos_inner"):
+            match["cos_inner"] = list(set(match.get("cos_inner")))
+            match["cos_inner"].sort()
+
+        if match.get("destination_mac_address"):
+            match["destination_mac_address"] = match.get("destination_mac_address").upper().replace(':', '.')
+
+        if match.get("dscp"):
+            dscp_values = match.get("dscp").get("dscp_values")
+            for i in range(len(dscp_values)):
+                if Class_mapsTemplate.DSCP_VALUES.get(dscp_values[i], None) is not None:
+                    dscp_values[i] = Class_mapsTemplate.DSCP_VALUES.get(dscp_values[i])
+            match["dscp"]["dscp_values"] = list(set(filter(lambda v: v is not None, dscp_values)))
+            match["dscp"]["dscp_values"].sort()
+
+        if match.get("ip_precedence"):
+            match["ip_precedence"] = list(set(match.get("ip_precedence")))
+            match["ip_precedence"].sort()
+
+        if match.get("mpls_experimental_topmost"):
+            match["mpls_experimental_topmost"] = list(set(match.get("mpls_experimental_topmost")))
+            match["mpls_experimental_topmost"].sort()
+
+        if match.get("source_mac_address"):
+            match["source_mac_address"] = match.get("source_mac_address").upper().replace(':', '.')

@@ -269,113 +269,65 @@ class TestIosClassMapsModule(TestIosModule):
         ]
         self.assertEqual(sorted(result["commands"]), sorted(commands))
 
-    # def test_ios_acls_replaced_idempotent(self):
-    #     self.execute_show_command.return_value = dedent(
-    #         """\
-    #         Standard IP access list test_acl
-    #         Extended IP access list 110
-    #             10 permit tcp 198.51.100.0 0.0.0.255 any eq 22 log (tag = testLog)
-    #             20 deny icmp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 echo dscp ef ttl eq 10
-    #             30 deny icmp object-group test_network_og any dscp ef ttl eq 10
-    #         IPv6 access list R1_TRAFFIC
-    #             deny tcp any eq www any eq telnet ack dscp af11 sequence 10
-    #         Extended IP access list test_pre
-    #             10 permit ip any any precedence internet
-    #         """,
-    #     )
-    #     set_module_args(
-    #         dict(
-    #             config=[
-    #                 {
-    #                     "afi": "ipv4",
-    #                     "acls": [
-    #                         {
-    #                             "name": "110",
-    #                             "acl_type": "extended",
-    #                             "aces": [
-    #                                 {
-    #                                     "sequence": 10,
-    #                                     "grant": "permit",
-    #                                     "protocol": "tcp",
-    #                                     "source": {
-    #                                         "address": "198.51.100.0",
-    #                                         "wildcard_bits": "0.0.0.255",
-    #                                     },
-    #                                     "destination": {"any": True, "port_protocol": {"eq": "22"}},
-    #                                     "log": {"user_cookie": "testLog"},
-    #                                 },
-    #                                 {
-    #                                     "sequence": 20,
-    #                                     "grant": "deny",
-    #                                     "protocol": "icmp",
-    #                                     "source": {
-    #                                         "address": "192.0.2.0",
-    #                                         "wildcard_bits": "0.0.0.255",
-    #                                     },
-    #                                     "destination": {
-    #                                         "address": "192.0.3.0",
-    #                                         "wildcard_bits": "0.0.0.255",
-    #                                     },
-    #                                     "dscp": "ef",
-    #                                     "ttl": {"eq": 10},
-    #                                     "protocol_options": {"icmp": {"echo": True}},
-    #                                 },
-    #                                 {
-    #                                     "sequence": 30,
-    #                                     "grant": "deny",
-    #                                     "protocol": "icmp",
-    #                                     "source": {"object_group": "test_network_og"},
-    #                                     "destination": {"any": True},
-    #                                     "dscp": "ef",
-    #                                     "ttl": {"eq": 10},
-    #                                 },
-    #                             ],
-    #                         },
-    #                         {"name": "test_acl", "acl_type": "standard"},
-    #                         {
-    #                             "name": "test_pre",
-    #                             "acl_type": "extended",
-    #                             "aces": [
-    #                                 {
-    #                                     "sequence": 10,
-    #                                     "grant": "permit",
-    #                                     "protocol": "ip",
-    #                                     "source": {"any": True},
-    #                                     "destination": {"any": True},
-    #                                     "precedence": "internet",
-    #                                 },
-    #                             ],
-    #                         },
-    #                     ],
-    #                 },
-    #                 {
-    #                     "afi": "ipv6",
-    #                     "acls": [
-    #                         {
-    #                             "name": "R1_TRAFFIC",
-    #                             "aces": [
-    #                                 {
-    #                                     "sequence": 10,
-    #                                     "grant": "deny",
-    #                                     "protocol": "tcp",
-    #                                     "source": {"any": True, "port_protocol": {"eq": "www"}},
-    #                                     "destination": {
-    #                                         "any": True,
-    #                                         "port_protocol": {"eq": "telnet"},
-    #                                     },
-    #                                     "dscp": "af11",
-    #                                     "protocol_options": {"tcp": {"ack": True}},
-    #                                 },
-    #                             ],
-    #                         },
-    #                     ],
-    #                 },
-    #             ],
-    #             state="replaced",
-    #         ),
-    #     )
-    #     result = self.execute_module(changed=False)
-    #     self.assertEqual(sorted(result["commands"]), [])
+    def test_ios_class_maps_replaced_idempotent(self):
+        self.execute_show_command.return_value = dedent(
+            """\
+                Current configuration : 339 bytes
+                !
+                Configuration of Partition - class-map 
+                !
+                !
+                !
+                !
+                !
+                !
+                class-map match-all test-class1
+                class-map match-all test-class3
+                  description This is a test description.
+                class-map match-any test-class2
+                 match metadata device-model this_is_a_device_model
+                 match mpls experimental topmost 0  1  2  3  4 
+                 match packet length min 100 max 1000
+                !
+                !
+                end
+            """,
+        )
+        module_args = {
+            "config": [
+                {
+                    "name": "test-class1",
+                },
+                {
+                    "name": "test-class2",
+                    "match_type": "match-any",
+                    "matches": [
+                        {
+                            "metadata": {
+                                "device_model": "this_is_a_device_model"
+                            }
+                        },
+                        {
+                            "mpls_experimental_topmost": [0, 1, 2, 3, 4]
+                        },
+                        {
+                            "packet_length": {
+                                "min": 100,
+                                "max": 1000
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "test-class3",
+                    "description": "This is a test description."
+                }
+            ],
+            "state": "replaced"
+        }
+        set_module_args(module_args)
+        result = self.execute_module(changed=False)
+        self.assertEqual(sorted(result["commands"]), [])
 
     # def test_ios_acls_overridden(self):
     #     self.execute_show_command.return_value = dedent(

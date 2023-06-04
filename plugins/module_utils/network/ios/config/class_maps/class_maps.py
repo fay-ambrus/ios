@@ -144,11 +144,13 @@ class Class_maps(ResourceModule):
                 hm = have_matches[have_matches.index(wm)]
             self.compare(parsers=self.parsers, want=wm, have=hm)
 
-        for hm in have_matches:
-            wm = {}
-            if want_matches.count(hm) > 0:
-                wm = want_matches[want_matches.index(hm)]
-            self.compare(parsers=self.parsers, want=wm, have=hm)
+        # running 'no match' commands is only neccessary, if we wish to replace some config
+        if self.state == "replaced":
+            for hm in have_matches:
+                wm = {}
+                if want_matches.count(hm) > 0:
+                    wm = want_matches[want_matches.index(hm)]
+                self.compare(parsers=self.parsers, want=wm, have=hm)
 
         # remove "no description" command, if the class-map has been deleted in advance
         if begin + 1 < len(self.commands):

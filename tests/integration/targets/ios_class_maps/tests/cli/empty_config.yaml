@@ -1,11 +1,11 @@
 ---
 - ansible.builtin.debug:
-    msg: START ios_acls empty_config.yaml integration tests on connection={{ ansible_connection }}
+    msg: START ios_class_maps empty_config.yaml integration tests on connection={{ ansible_connection }}
 
 - name: Merged with empty configuration should give appropriate error message
   register: result
   ignore_errors: true
-  cisco.ios.ios_acls:
+  cisco.ios.ios_class_maps:
     config:
     state: merged
 
@@ -16,7 +16,7 @@
 - name: Replaced with empty configuration should give appropriate error message
   register: result
   ignore_errors: true
-  cisco.ios.ios_acls:
+  cisco.ios.ios_class_maps:
     config:
     state: replaced
 
@@ -27,7 +27,7 @@
 - name: Overridden with empty configuration should give appropriate error message
   register: result
   ignore_errors: true
-  cisco.ios.ios_acls:
+  cisco.ios.ios_class_maps:
     config:
     state: overridden
 
@@ -38,7 +38,7 @@
 - name: Rendered with empty configuration should give appropriate error message
   register: result
   ignore_errors: true
-  cisco.ios.ios_acls:
+  cisco.ios.ios_class_maps:
     config:
     state: rendered
 
@@ -49,7 +49,7 @@
 - name: Parsed with empty configuration should give appropriate error message
   register: result
   ignore_errors: true
-  cisco.ios.ios_acls:
+  cisco.ios.ios_class_maps:
     running_config:
     state: parsed
 

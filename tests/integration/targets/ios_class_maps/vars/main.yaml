@@ -1,286 +1,161 @@
 ---
 deleted:
   commands:
-    - no ip access-list extended test_acl
-    - no ip access-list extended 110
-    - no ipv6 access-list R1_TRAFFIC
-deleted_afi:
-  commands:
-    - no ip access-list extended 110
-    - no ip access-list extended 123
-    - no ip access-list extended test_acl
+    - no class-map match-all test-class3
+    - no class-map match-all test-class1
+    - no class-map match-any test-class4
 deleted_all:
   commands:
-    - no ip access-list extended test_acl
-    - no ip access-list extended 110
-    - no ip access-list extended 123
-    - no ipv6 access-list R1_TRAFFIC
+    - no class-map match-all test-class1
+    - no class-map match-all test-class2
+    - no class-map match-all test-class3
+    - no class-map match-any test-class4
 merged:
   commands:
-    - ip access-list standard std_acl
-    - 10 deny 192.0.2.0 0.0.0.255
-    - ip access-list extended 110
-    - 10 deny icmp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 echo dscp ef ttl eq 10
-    - ip access-list extended 123
-    - 10 deny tcp 198.51.100.0 0.0.0.255 198.51.101.0 0.0.0.255 eq telnet ack tos 12
-    - 20 deny tcp 192.0.3.0 0.0.0.255 192.0.4.0 0.0.0.255 eq www ack dscp ef ttl lt 20
-    - ipv6 access-list R1_TRAFFIC
-    - deny tcp any eq www any eq telnet ack dscp af11 sequence 10
+    - class-map match-any test-class1
+    - description This is a description.
+    - match application h323 version test_version
+    - class-map match-all test-class2
+    - description This is another description.
+    - match access-group name test-acl
+    - match application attribute sub-category voice-video-chat-collaboration
 replaced:
   commands:
-    - ip access-list extended 110
-    - no 10 deny icmp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 echo dscp ef ttl eq 10
-    - 10 deny tcp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 eq www syn dscp ef ttl eq 10
-    - ip access-list extended 123
-    - no 20 deny tcp 192.0.3.0 0.0.0.255 192.0.4.0 0.0.0.255 eq www ack dscp ef ttl lt 20
-    - ip access-list extended 150
-    - 20 deny tcp 198.51.100.0 0.0.0.255 eq telnet 198.51.110.0 0.0.0.255 eq telnet
-      syn dscp ef ttl eq 10
+    - class-map match-all test-class1
+    - no match dscp 0 18 24 60
+    - class-map match-any test-class3
+    - description This is a new description.
+    - no match packet length min 1000
+    - no match not input-interface gigabitethernet 2
+    - no match not ip precedence 0 1 2
+    - match application application-group telepresence-group
+    - class-map match-any test-class4
+    - description Yet another class description.
+    - no match protocol http mime image
+    - match cos inner 1 2 3 4
+    - match not destination-address mac 1234.5678.9ABC
+    - class-map match-all new_class
+    - match not cos 1 4 6
 overridden:
   commands:
-    - no ipv6 access-list R1_TRAFFIC
-    - no ip access-list extended test_acl
-    - ip access-list extended 110
-    - no 10 deny icmp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 echo dscp ef ttl eq 10
-    - 10 deny tcp 198.51.100.0 0.0.0.255 eq telnet 198.51.110.0 0.0.0.255 eq www ack
-      dscp ef ttl eq 10
-    - ip access-list extended 123
-    - no 20 deny tcp 192.0.3.0 0.0.0.255 192.0.4.0 0.0.0.255 eq www ack dscp ef ttl lt 20
-    - ip access-list extended 150
-    - 10 deny tcp 198.51.100.0 0.0.0.255 eq telnet 198.51.110.0 0.0.0.255 eq telnet syn
-      dscp ef ttl eq 10
-
+    - no class-map match-all test-class1
+    - no class-map match-all test-class2
+    - no class-map match-all test-class3
+    - class-map match-any test-class4
+    - description This is a test description.
+    - no match protocol http mime image
+    - match not protocol attribute tunnel tunnel-unassigned
+    - class-map match-all test-class5
+    - match qos-group 99
+    - class-map match-any test-class6
+    - match source-address mac 1234.5678.9ABC
 gathered:
   config:
-    - acls:
-        - aces:
-            - destination:
-                address: 192.0.3.0
-                wildcard_bits: 0.0.0.255
-              dscp: ef
-              grant: deny
-              protocol: icmp
-              protocol_options:
-                icmp:
-                  echo: true
-              sequence: 10
-              source:
-                address: 192.0.2.0
-                wildcard_bits: 0.0.0.255
-              ttl:
-                eq: 10
-          acl_type: extended
-          name: "110"
-        - aces:
-            - destination:
-                address: 198.51.101.0
-                port_protocol:
-                  eq: telnet
-                wildcard_bits: 0.0.0.255
-              grant: deny
-              protocol: tcp
-              protocol_options:
-                tcp:
-                  ack: true
-              sequence: 10
-              source:
-                address: 198.51.100.0
-                wildcard_bits: 0.0.0.255
-              tos:
-                service_value: 12
-            - destination:
-                address: 192.0.4.0
-                port_protocol:
-                  eq: www
-                wildcard_bits: 0.0.0.255
-              dscp: ef
-              grant: deny
-              protocol: tcp
-              protocol_options:
-                tcp:
-                  ack: true
-              sequence: 20
-              source:
-                address: 192.0.3.0
-                wildcard_bits: 0.0.0.255
-              ttl:
-                lt: 20
-          acl_type: extended
-          name: "123"
-        - aces:
-            - destination:
-                address: 192.0.3.0
-                port_protocol:
-                  eq: www
-                wildcard_bits: 0.0.0.255
-              grant: deny
-              option:
-                traceroute: true
-              protocol: tcp
-              protocol_options:
-                tcp:
-                  fin: true
-              sequence: 10
-              source:
-                address: 192.0.2.0
-                wildcard_bits: 0.0.0.255
-              ttl:
-                eq: 10
-          acl_type: extended
-          name: test_acl
-      afi: ipv4
-    - acls:
-        - aces:
-            - destination:
-                any: true
-                port_protocol:
-                  eq: telnet
-              dscp: af11
-              grant: deny
-              protocol: tcp
-              protocol_options:
-                tcp:
-                  ack: true
-              sequence: 10
-              source:
-                any: true
-                port_protocol:
-                  eq: www
-          name: R1_TRAFFIC
-      afi: ipv6
-
+    - class_type: standard
+      match_type: match-any
+      matches:
+        - protocol:
+            protocol_name: http
+            subprotocol_parameter:
+              subprotocol_parameter_name: mime
+              subprotocol_parameter_value: image
+      name: test-class4
+    - class_type: standard
+      match_type: match-all
+      matches:
+        - dscp:
+            dscp_values:
+              - '0'
+              - '18'
+              - '24'
+              - '60'
+            ip_versions: ipv4-and-ipv6
+      name: test-class1
+    - class_type: standard
+      description: This is a test description.
+      match_type: match-all
+      matches:
+        - packet_length:
+            min: 1000
+        - input_interface:
+            interface_number: 2
+            interface_type: gigabitethernet
+          negate: yes
+        - ip_precedence:
+            - 0
+            - 1
+            - 2
+          negate: yes
+      name: test-class3
+    - class_type: standard
+      match_type: match-all
+      matches:
+        - any: yes
+      name: test-class2
 parsed:
   config:
-    - acls:
-        - aces:
-            - destination:
-                address: 192.0.3.0
-                wildcard_bits: 0.0.0.255
-              dscp: ef
-              grant: deny
-              protocol: icmp
-              protocol_options:
-                icmp:
-                  echo: true
-              sequence: 10
-              source:
-                address: 192.0.2.0
-                wildcard_bits: 0.0.0.255
-              ttl:
-                eq: 10
-            - remarks:
-                - "test a remark."
-          acl_type: extended
-          name: "110"
-        - aces:
-            - destination:
-                address: 198.51.101.0
-                port_protocol:
-                  eq: telnet
-                wildcard_bits: 0.0.0.255
-              grant: deny
-              protocol: tcp
-              protocol_options:
-                tcp:
-                  ack: true
-              sequence: 10
-              source:
-                address: 198.51.100.0
-                wildcard_bits: 0.0.0.255
-              tos:
-                service_value: 12
-            - destination:
-                address: 192.0.4.0
-                port_protocol:
-                  eq: www
-                wildcard_bits: 0.0.0.255
-              dscp: ef
-              grant: deny
-              protocol: tcp
-              protocol_options:
-                tcp:
-                  ack: true
-              sequence: 20
-              source:
-                address: 192.0.3.0
-                wildcard_bits: 0.0.0.255
-              ttl:
-                lt: 20
-          acl_type: extended
-          name: "123"
-        - aces:
-            - destination:
-                address: 192.0.3.0
-                port_protocol:
-                  eq: www
-                wildcard_bits: 0.0.0.255
-              grant: deny
-              option:
-                traceroute: true
-              protocol: tcp
-              protocol_options:
-                tcp:
-                  fin: true
-              sequence: 10
-              source:
-                address: 192.0.2.0
-                wildcard_bits: 0.0.0.255
-              ttl:
-                eq: 10
-          acl_type: extended
-          name: test_acl
-      afi: ipv4
-    - acls:
-        - aces:
-            - destination:
-                any: true
-                port_protocol:
-                  eq: telnet
-              dscp: af11
-              grant: deny
-              protocol: tcp
-              protocol_options:
-                tcp:
-                  ack: true
-              sequence: 10
-              source:
-                any: true
-                port_protocol:
-                  eq: www
-          name: R1_TRAFFIC
-      afi: ipv6
+    - name: test-class1
+      class_type: standard
+      match_type: match-all
+    - name: test-class3
+      class_type: standard
+      match_type: match-all
+      description: This is a test description.
+    - name: test-class2
+      class_type: standard
+      match_type: match-any
+      matches:
+        - metadata:
+            device_model: this_is_a_device_model
+        - mpls_experimental_topmost: [0, 1, 2, 3, 4]
+        - packet_length:
+            min: 100
+            max: 1000
 
 rendered:
   commands:
-    - ip access-list extended 110
-    - 10 deny tcp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 eq www syn dscp ef ttl eq
-      10
-    - ip access-list extended 150
-    - deny tcp 198.51.100.0 0.0.0.255 eq telnet 198.51.110.0 0.0.0.255 eq telnet syn
-      dscp ef ttl eq 10
+    - class-map match-any test-class-map3
+    - match application application-group telepresence-group
+    - class-map match-all new_class
+    - match cac status admitted
+    - class-map match-all another_new_class
+    - match class-map test-class-map1
+    - match not cos 1 4 6
+    - class-map match-any yet_another_class_map
+    - description yet another class description.
+    - match cos inner 1 2 3 4 5 6 7
+    - match not destination-address mac 1234.5678.9ABC
 
 rtt_overriden:
   commands:
-    - no ipv6 access-list R1_TRAFFIC
-    - no ip access-list extended test_acl
-    - ip access-list extended 110
-    - no 10 deny icmp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 echo dscp ef ttl eq 10
-    - 10 deny tcp 198.51.100.0 0.0.0.255 eq telnet 198.51.110.0 0.0.0.255 eq www ack dscp ef ttl eq 10
-    - ip access-list extended 123
-    - no 10 deny tcp 198.51.100.0 0.0.0.255 198.51.101.0 0.0.0.255 eq telnet ack tos 12
-    - no 20 deny tcp 192.0.3.0 0.0.0.255 192.0.4.0 0.0.0.255 eq www ack dscp ef ttl lt 20
-    - deny tcp 198.51.100.0 0.0.0.255 198.51.101.0 0.0.0.255 eq telnet ack tos 12
-    - ip access-list extended 150
-    - deny tcp 198.51.100.0 0.0.0.255 eq telnet 198.51.110.0 0.0.0.255 eq telnet syn dscp ef ttl eq 10
+    - no class-map match-any test-class4
+    - class-map match-all test-class1
+    - no match dscp 0 18 24 60
+    - class-map match-all test-class2
+    - match not group-object security source test_object_group
+    - no match any
+    - no match not application attribute sub-category voice-video-chat-collaboration
+    - class-map match-all test-class3
+    - no description This is a test description.
+    - match ip precedence 3 5
+    - no match packet length min 1000
+    - no match not input-interface gigabitethernet 2
+    - no match not ip precedence 0 1 2
+    - no match input-interface loopback 0
 rtt:
   commands:
-    - ip access-list extended 110
-    - no 10 deny tcp 198.51.100.0 0.0.0.255 eq telnet 198.51.110.0 0.0.0.255 eq www ack dscp ef ttl eq 10
-    - 10 deny icmp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 echo dscp ef ttl eq 10
-    - ip access-list extended 123
-    - 20 deny tcp 192.0.3.0 0.0.0.255 192.0.4.0 0.0.0.255 eq www ack dscp ef ttl lt 20
-    - ip access-list extended test_acl
-    - 10 deny tcp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 eq www fin option traceroute ttl eq 10
-    - no ip access-list extended 150
-    - ipv6 access-list R1_TRAFFIC
-    - deny tcp any eq www any eq telnet ack dscp af11 sequence 10
+    - class-map match-any test-class4
+    - match protocol http mime image
+    - match protocol attribute encrypted encrypted-yes
+    - class-map match-all test-class1
+    - match dscp 0 18 24 60
+    - class-map match-all test-class3
+    - description This is a test description.
+    - match packet length min 1000
+    - match not input-interface gigabitethernet 2
+    - match not ip precedence 0 1 2
+    - match input-interface loopback 0
+    - no match ip precedence 3 5
+    - class-map match-all test-class2
+    - match any
+    - match not application attribute sub-category voice-video-chat-collaboration

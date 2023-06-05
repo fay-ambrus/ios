@@ -1,54 +1,33 @@
 ---
 - ansible.builtin.debug:
-    msg: Start ios_acls rendered integration tests ansible_connection={{ ansible_connection }}
+    msg: Start ios_class_maps rendered integration tests ansible_connection={{ ansible_connection }}
 
 - block:
     - name: Rendered the provided configuration with the existing running configuration
       register: result
-      cisco.ios.ios_acls:
+      cisco.ios.ios_class_maps:
         config:
-          - afi: ipv4
-            acls:
-              - name: 110
-                aces:
-                  - grant: deny
-                    sequence: 10
-                    protocol: tcp
-                    protocol_options:
-                      tcp:
-                        syn: true
-                    source:
-                      address: 192.0.2.0
-                      wildcard_bits: 0.0.0.255
-                    destination:
-                      address: 192.0.3.0
-                      wildcard_bits: 0.0.0.255
-                      port_protocol:
-                        eq: www
-                    dscp: ef
-                    ttl:
-                      eq: 10
-
-              - name: 150
-                aces:
-                  - grant: deny
-                    protocol: tcp
-                    protocol_options:
-                      tcp:
-                        syn: true
-                    source:
-                      address: 198.51.100.0
-                      wildcard_bits: 0.0.0.255
-                      port_protocol:
-                        eq: telnet
-                    destination:
-                      address: 198.51.110.0
-                      wildcard_bits: 0.0.0.255
-                      port_protocol:
-                        eq: telnet
-                    dscp: ef
-                    ttl:
-                      eq: 10
+          - name: test-class-map3
+            match_type: match-any
+            matches: 
+              - application_group: telepresence-group
+          - name: new_class
+            class_type: standard
+            match_type: match-all
+            matches:
+              - cac_status: admitted
+          - name: another_new_class
+            matches: 
+              - class_map: test-class-map1
+              - cos: [4, 1, 6]
+                negate: True
+          - name: yet_another_class_map
+            match_type: match-any
+            description: yet another class description.
+            matches: 
+              - cos_inner: [1, 2, 3, 4, 5, 6, 7]
+              - destination_mac_address: 1234:5678:9aBc
+                negate: True
         state: rendered
 
     - ansible.builtin.assert:

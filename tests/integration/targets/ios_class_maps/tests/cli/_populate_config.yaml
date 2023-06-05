@@ -2,9 +2,16 @@
 - name: Populate configuration
   vars:
     lines:
-      "ip access-list extended test_acl\ndeny tcp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 eq www fin option traceroute ttl eq 10\nip access-list extended 110\n\
-      deny icmp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 echo dscp ef ttl eq 10\nip access-list extended 123\ndeny tcp 198.51.100.0 0.0.0.255 198.51.101.0 0.0.0.255\
-      \ eq telnet ack tos 12\ndeny tcp 192.0.3.0 0.0.0.255 192.0.4.0 0.0.0.255 eq www ack dscp ef ttl lt 20\nipv6 access-list R1_TRAFFIC\ndeny tcp any eq www any\
-      \ eq telnet ack dscp af11\n"
+      "class-map match-all test-class1\n\
+       match dscp default cs3 af21 60\n\
+      class-map match-all test-class2\n\
+       match any\n\
+      class-map match-all test-class3\n\
+        description This is a test description.\n\
+       match packet length min 1000\n\
+       match not input-interface GigabitEthernet 2\n\
+       match not ip precedence 0 1 2\n\
+      class-map match-any test-class4\n\
+       match protocol http mime image\n"
   ansible.netcommon.cli_config:
     config: "{{ lines }}"

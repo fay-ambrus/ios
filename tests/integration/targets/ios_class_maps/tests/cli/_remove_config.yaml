@@ -1,8 +1,5 @@
 ---
-- name: Delete ACL attributes based on AFI
+- name: Delete Class-Map attributes
   register: result
-  cisco.ios.ios_acls: &id002
-    config:
-      - afi: ipv4
-      - afi: ipv6
+  cisco.ios.ios_class_maps: &id002
     state: deleted

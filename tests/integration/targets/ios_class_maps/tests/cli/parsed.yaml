@@ -1,11 +1,11 @@
 ---
 - ansible.builtin.debug:
-    msg: START ios_acls parsed integration tests on connection={{ ansible_connection }}
+    msg: START ios_class_maps parsed integration tests on connection={{ ansible_connection }}
 
 - name: Parse the commands for provided configuration
   become: true
   register: result
-  cisco.ios.ios_acls:
+  cisco.ios.ios_class_maps:
     running_config: "{{ lookup('file', '_parsed.cfg') }}"
     state: parsed
 

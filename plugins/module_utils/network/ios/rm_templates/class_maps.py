@@ -50,9 +50,9 @@ class Class_mapsTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
-            "name": "class maps",
+            "name": "class-map",
             "getval": re.compile(
-                r"""^class-map
+                r"""^\s*class-map
                     \s(?P<match_type>match-any|match-all)
                     \s(?P<class_map_name>\S+)
                 \s*$""",
@@ -709,8 +709,8 @@ class Class_mapsTemplate(NetworkTemplate):
             "compval": "protocol",
             "setval": "match{{ ' not' if negate is defined and negate else '' }} protocol "
             "{{ protocol.protocol_name }}"
-            " {{ protocol.subprotocol_parameter.subprotocol_parameter_name if protocol.subprotocol_parameter.subprotocol_parameter_name is defined}}"
-            " {{ protocol.subprotocol_parameter.subprotocol_parameter_value if protocol.subprotocol_parameter.subprotocol_parameter_value is defined}}"
+            "{{ ' ' + protocol.subprotocol_parameter.subprotocol_parameter_name if protocol.subprotocol_parameter is defined and protocol.subprotocol_parameter.subprotocol_parameter_name is defined else ''}}"
+            "{{ ' ' + protocol.subprotocol_parameter.subprotocol_parameter_value if protocol.subprotocol_parameter is defined and protocol.subprotocol_parameter.subprotocol_parameter_value is defined else ''}}"
         },
         {
             "name": "match qos group",
@@ -835,9 +835,9 @@ class Class_mapsTemplate(NetworkTemplate):
                     ]
                 }
             },
-            "compval": "vlan_id",
+            "compval": "vlan",
             "setval": "match{{ ' not' if negate is defined and negate else '' }} "
-            "vlan {{ vlan_id }}",
+            "vlan {{ vlan }}",
         },
         {
             "name": "match vlan inner",
@@ -858,9 +858,9 @@ class Class_mapsTemplate(NetworkTemplate):
                     ]
                 }
             },
-            "compval": "vlan_id_inner",
+            "compval": "vlan_inner",
             "setval": "match{{ ' not' if negate is defined and negate else '' }} "
-            "vlan inner {{ vlan_id_inner }}",
+            "vlan inner {{ vlan_inner }}",
         },
         {
             "name": "match traffic category",

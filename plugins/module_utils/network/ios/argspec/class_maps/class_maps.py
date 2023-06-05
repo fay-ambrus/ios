@@ -466,6 +466,7 @@ class Class_mapsArgs(object):  # pylint: disable=R0903
                 },
             },
         },
+        "running_config": {"type": "str"},
         "state": {
             "choices": [
                 "merged",

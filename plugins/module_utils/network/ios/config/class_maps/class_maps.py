@@ -46,9 +46,9 @@ class Class_maps(ResourceModule):
             resource="class_maps",
             tmplt=Class_mapsTemplate(),
         )
-        self.parsers = [
-            "class maps",
-            "description",
+        self.class_map_parsers = ["class-map"]
+        self.description_parsers = ["description"]
+        self.match_parsers = [
             "match access group",
             "match any",
             "match application",
@@ -123,10 +123,28 @@ class Class_maps(ResourceModule):
            for the Class_maps network resource.
         """
 
+        # compare class-map headers
         begin = len(self.commands)
+        before_len = len(self.commands)
 
-        # first of all, compare the class-map headers
-        self.compare(parsers=self.parsers, want=want, have=have)
+        self.compare(parsers=self.class_map_parsers, want=want, have=have)
+
+        class_map_cmd = None
+        if before_len != len(self.commands):
+            class_map_cmd = self.commands[len(self.commands) - 1]
+
+        # compare class-map descriptions
+        before_len = len(self.commands)
+
+        self.compare(parsers=self.description_parsers, want=want, have=have)
+
+        description_cmd = None
+        if before_len != len(self.commands):
+            description_cmd_idx = len(self.commands) - 1
+            description_cmd = self.commands[description_cmd_idx]
+
+        # compare matches
+        before_len = len(self.commands)
 
         want_matches = []
         have_matches = []
@@ -142,26 +160,25 @@ class Class_maps(ResourceModule):
             hm = {}
             if have_matches.count(wm) > 0:
                 hm = have_matches[have_matches.index(wm)]
-            self.compare(parsers=self.parsers, want=wm, have=hm)
+            self.compare(parsers=self.match_parsers, want=wm, have=hm)
 
-        # running 'no match' commands is only neccessary, if we wish to replace some config
-        if self.state == "replaced":
+        # some matches have to be deleted if the class-map is not deleted, but we have "have" matches
+        if class_map_cmd is None or class_map_cmd.startswith("class-map"):
             for hm in have_matches:
                 wm = {}
                 if want_matches.count(hm) > 0:
                     wm = want_matches[want_matches.index(hm)]
-                self.compare(parsers=self.parsers, want=wm, have=hm)
+                self.compare(parsers=self.match_parsers, want=wm, have=hm)
 
-        # remove "no description" command, if the class-map has been deleted in advance
-        if begin + 1 < len(self.commands):
-            if self.commands[begin].startswith("no class-map") and self.commands[begin + 1].startswith("no description"):
-                del self.commands[begin + 1]
+        # remove description command, if the class-map is going to be deleted
+        elif class_map_cmd.startswith("no class-map") and description_cmd is not None:
+            del self.commands[description_cmd_idx]
+            description_cmd = None
 
         # generate the command to enter the approriate class-map's configuration
-        if begin < len(self.commands):
-            if not self.commands[begin].startswith("class-map") and not self.commands[begin].startswith("no class-map"):
-                class_map_cmd = "class-map {0} {1}".format(want["match_type"], want["name"])
-                self.commands.insert(begin, class_map_cmd)
+        if (description_cmd is not None or before_len < len(self.commands)) and class_map_cmd is None:
+            new_class_map_cmd = "class-map {0} {1}".format(want["match_type"], want["name"])
+            self.commands.insert(begin, new_class_map_cmd)
 
     def _validate_match(self, match):
         if match.get("cos"):

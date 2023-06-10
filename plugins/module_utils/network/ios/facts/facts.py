@@ -91,7 +91,7 @@ from ansible_collections.cisco.ios.plugins.module_utils.network.ios.facts.vlans.
     VlansFacts,
 )
 from ansible_collections.cisco.ios.plugins.module_utils.network.ios.facts.class_maps.class_maps import (
-    Class_mapsFacts
+    Class_mapsFacts,
 )
 
 

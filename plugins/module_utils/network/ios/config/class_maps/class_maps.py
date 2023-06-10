@@ -75,7 +75,7 @@ class Class_maps(ResourceModule):
             "match source mac",
             "match vlan",
             "match vlan inner",
-            "match traffic category"
+            "match traffic category",
         ]
 
     def execute_module(self):
@@ -93,8 +93,8 @@ class Class_maps(ResourceModule):
         """ Generate configuration commands to send based on
             want, have and desired state.
         """
-        wantd = {entry['name']: entry for entry in self.want}
-        haved = {entry['name']: entry for entry in self.have}
+        wantd = {entry["name"]: entry for entry in self.want}
+        haved = {entry["name"]: entry for entry in self.have}
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":
@@ -102,9 +102,7 @@ class Class_maps(ResourceModule):
 
         # if state is deleted, empty out wantd and set haved to wantd
         if self.state == "deleted":
-            haved = {
-                k: v for k, v in iteritems(haved) if k in wantd or not wantd
-            }
+            haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
             wantd = {}
 
         # remove superfluous config for overridden and deleted
@@ -176,7 +174,9 @@ class Class_maps(ResourceModule):
             description_cmd = None
 
         # generate the command to enter the approriate class-map's configuration
-        if (description_cmd is not None or before_len < len(self.commands)) and class_map_cmd is None:
+        if (
+            description_cmd is not None or before_len < len(self.commands)
+        ) and class_map_cmd is None:
             new_class_map_cmd = "class-map {0} {1}".format(want["match_type"], want["name"])
             self.commands.insert(begin, new_class_map_cmd)
 
@@ -190,7 +190,9 @@ class Class_maps(ResourceModule):
             match["cos_inner"].sort()
 
         if match.get("destination_mac_address"):
-            match["destination_mac_address"] = match.get("destination_mac_address").upper().replace(':', '.')
+            match["destination_mac_address"] = (
+                match.get("destination_mac_address").upper().replace(":", ".")
+            )
 
         if match.get("dscp"):
             dscp_values = match.get("dscp").get("dscp_values")
@@ -209,4 +211,4 @@ class Class_maps(ResourceModule):
             match["mpls_experimental_topmost"].sort()
 
         if match.get("source_mac_address"):
-            match["source_mac_address"] = match.get("source_mac_address").upper().replace(':', '.')
+            match["source_mac_address"] = match.get("source_mac_address").upper().replace(":", ".")

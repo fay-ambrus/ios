@@ -19,9 +19,7 @@ based on the configuration.
 from copy import deepcopy
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
-    utils,
-)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.cisco.ios.plugins.module_utils.network.ios.rm_templates.class_maps import (
     Class_mapsTemplate,
 )
@@ -29,18 +27,17 @@ from ansible_collections.cisco.ios.plugins.module_utils.network.ios.argspec.clas
     Class_mapsArgs,
 )
 
+
 class Class_mapsFacts(object):
     """ The ios class_maps facts class
     """
 
-    def __init__(self, module, subspec='config', options='options'):
+    def __init__(self, module, subspec="config", options="options"):
         self._module = module
         self.argument_spec = Class_mapsArgs.argument_spec
 
     def get_class_map_data(self, connection):
         # Get information about each type of class-map
-        # alternate command might be 'show running-config partition class-map'
-        # todo: consider if this is the correct way to use it
         return connection.get("show running-config partition class-map")
 
     def populate_facts(self, connection, ansible_facts, data=None):
@@ -63,7 +60,7 @@ class Class_mapsFacts(object):
         class_maps_parser = Class_mapsTemplate(lines=data.splitlines(), module=self._module)
         objs = list(class_maps_parser.parse().values())
 
-        ansible_facts['ansible_network_resources'].pop('class_maps', None)
+        ansible_facts["ansible_network_resources"].pop("class_maps", None)
 
         for class_map in objs:
             if class_map.get("matches"):
@@ -84,24 +81,30 @@ class Class_mapsFacts(object):
                                 dscp_values[i] = Class_mapsTemplate.DSCP_VALUES.get(dscp_values[i])
                             elif isinstance(dscp_values[i], int):
                                 dscp_values[i] = str(dscp_values[i])
-                        match["dscp"]["dscp_values"] = list(filter(lambda v: v is not None, dscp_values))
+                        match["dscp"]["dscp_values"] = list(
+                            filter(lambda v: v is not None, dscp_values)
+                        )
                         match["dscp"]["dscp_values"].sort()
 
                     if match.get("ip_precedence"):
                         ip_precedence_values = match.get("ip_precedence")
-                        match["ip_precedence"] = list(filter(lambda v: v is not None, ip_precedence_values))
+                        match["ip_precedence"] = list(
+                            filter(lambda v: v is not None, ip_precedence_values)
+                        )
 
                     if match.get("mpls_experimental_topmost"):
                         mpls_values = match.get("mpls_experimental_topmost")
-                        match["mpls_experimental_topmost"] = list(filter(lambda v: v is not None, mpls_values))
+                        match["mpls_experimental_topmost"] = list(
+                            filter(lambda v: v is not None, mpls_values)
+                        )
 
         params = utils.remove_empties(
             class_maps_parser.validate_config(self.argument_spec, {"config": objs}, redact=True)
         )
 
-        if 'config' in params:
-            facts['class_maps'] = params['config']
+        if "config" in params:
+            facts["class_maps"] = params["config"]
 
-        ansible_facts['ansible_network_resources'].update(facts)
+        ansible_facts["ansible_network_resources"].update(facts)
 
         return ansible_facts

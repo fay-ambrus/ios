@@ -45,7 +45,7 @@ class Class_mapsTemplate(NetworkTemplate):
         "cs6": "48",
         "cs7": "56",
         "default": "0",
-        "ef": "46"
+        "ef": "46",
     }
     # fmt: off
     PARSERS = [
@@ -709,8 +709,10 @@ class Class_mapsTemplate(NetworkTemplate):
             "compval": "protocol",
             "setval": "match{{ ' not' if negate is defined and negate else '' }} protocol "
             "{{ protocol.protocol_name }}"
-            "{{ ' ' + protocol.subprotocol_parameter.subprotocol_parameter_name if protocol.subprotocol_parameter is defined and protocol.subprotocol_parameter.subprotocol_parameter_name is defined else ''}}"
-            "{{ ' ' + protocol.subprotocol_parameter.subprotocol_parameter_value if protocol.subprotocol_parameter is defined and protocol.subprotocol_parameter.subprotocol_parameter_value is defined else ''}}"
+            "{{ ' ' + protocol.subprotocol_parameter.subprotocol_parameter_name "
+            "if protocol.subprotocol_parameter is defined and protocol.subprotocol_parameter.subprotocol_parameter_name is defined else ''}}"
+            "{{ ' ' + protocol.subprotocol_parameter.subprotocol_parameter_value "
+            "if protocol.subprotocol_parameter is defined and protocol.subprotocol_parameter.subprotocol_parameter_value is defined else ''}}"
         },
         {
             "name": "match qos group",

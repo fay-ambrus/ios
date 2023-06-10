@@ -24,35 +24,35 @@ class TestIosClassMapsModule(TestIosModule):
         super(TestIosClassMapsModule, self).setUp()
 
         self.mock_get_config = patch(
-            "ansible_collections.ansible.netcommon.plugins.module_utils.network.common.network.Config.get_config",
+            "ansible_collections.ansible.netcommon.plugins.module_utils.network.common.network.Config.get_config"
         )
         self.get_config = self.mock_get_config.start()
 
         self.mock_load_config = patch(
-            "ansible_collections.ansible.netcommon.plugins.module_utils.network.common.network.Config.load_config",
+            "ansible_collections.ansible.netcommon.plugins.module_utils.network.common.network.Config.load_config"
         )
         self.load_config = self.mock_load_config.start()
 
         self.mock_get_resource_connection_config = patch(
             "ansible_collections.ansible.netcommon.plugins.module_utils.network.common.cfg.base."
-            "get_resource_connection",
+            "get_resource_connection"
         )
         self.get_resource_connection_config = self.mock_get_resource_connection_config.start()
 
         self.mock_get_resource_connection_facts = patch(
             "ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base."
-            "get_resource_connection",
+            "get_resource_connection"
         )
         self.get_resource_connection_facts = self.mock_get_resource_connection_facts.start()
 
         self.mock_edit_config = patch(
-            "ansible_collections.cisco.ios.plugins.module_utils.network.ios.providers.providers.CliProvider.edit_config",
+            "ansible_collections.cisco.ios.plugins.module_utils.network.ios.providers.providers.CliProvider.edit_config"
         )
         self.edit_config = self.mock_edit_config.start()
 
         self.mock_execute_show_command = patch(
             "ansible_collections.cisco.ios.plugins.module_utils.network.ios.facts.class_maps.class_maps."
-            "Class_mapsFacts.get_class_map_data",
+            "Class_mapsFacts.get_class_map_data"
         )
         self.execute_show_command = self.mock_execute_show_command.start()
 
@@ -70,7 +70,7 @@ class TestIosClassMapsModule(TestIosModule):
             """\
                 Current configuration : 372 bytes
                 !
-                Configuration of Partition - class-map 
+                Configuration of Partition - class-map
                 !
                 !
                 !
@@ -82,7 +82,7 @@ class TestIosClassMapsModule(TestIosModule):
                  match access-group name test_acl
                  match application citrix source cli
                 class-map match-all test-class-map2
-                 match any 
+                 match any
                 class-map match-any test-class-map3
                   description This is a test description.
                  match application attribute media-type audio-video
@@ -96,50 +96,32 @@ class TestIosClassMapsModule(TestIosModule):
                 {
                     "name": "test-class-map3",
                     "match_type": "match-any",
-                    "matches": [
-                        {
-                            "application_group": "telepresence-group"
-                        }
-                    ]
+                    "matches": [{"application_group": "telepresence-group"}],
                 },
                 {
                     "name": "new_class",
                     "class_type": "standard",
                     "match_type": "match-all",
-                    "matches": [
-                        {
-                            "cac_status": "admitted"
-                        }
-                    ]
+                    "matches": [{"cac_status": "admitted"}],
                 },
                 {
                     "name": "another_new_class",
                     "matches": [
-                        {
-                            "class_map": "test-class-map1",
-                        },
-                        {
-                            "cos": [4, 1, 6],
-                            "negate": True
-                        }
-                    ]
+                        {"class_map": "test-class-map1"},
+                        {"cos": [4, 1, 6], "negate": True},
+                    ],
                 },
                 {
                     "name": "yet_another_class_map",
                     "match_type": "match-any",
                     "description": "yet another class description.",
                     "matches": [
-                        {
-                            "cos_inner": [1, 2, 3, 4, 5, 6, 7]
-                        },
-                        {
-                            "destination_mac_address": "1234:5678:9aBc",
-                            "negate": True
-                        }
-                    ]
-                }
+                        {"cos_inner": [1, 2, 3, 4, 5, 6, 7]},
+                        {"destination_mac_address": "1234:5678:9aBc", "negate": True},
+                    ],
+                },
             ],
-            "state": "merged"
+            "state": "merged",
         }
         set_module_args(module_args)
         result = self.execute_module(changed=True)
@@ -154,7 +136,7 @@ class TestIosClassMapsModule(TestIosModule):
             "class-map match-any yet_another_class_map",
             "description yet another class description.",
             "match cos inner 1 2 3 4 5 6 7",
-            "match not destination-address mac 1234.5678.9ABC"
+            "match not destination-address mac 1234.5678.9ABC",
         ]
         self.assertEqual(sorted(result["commands"]), sorted(commands))
 
@@ -163,7 +145,7 @@ class TestIosClassMapsModule(TestIosModule):
             """\
                 Current configuration : 305 bytes
                 !
-                Configuration of Partition - class-map 
+                Configuration of Partition - class-map
                 !
                 !
                 !
@@ -172,7 +154,7 @@ class TestIosClassMapsModule(TestIosModule):
                 !
                 class-map match-all test-class1
                 class-map match-all test-class3
-                 match dscp default  cs1  af31  cs7  60 
+                 match dscp default  cs1  af31  cs7  60
                 class-map match-all test-class2
                  match discard-class 0
                  match security-group destination tag 100
@@ -185,28 +167,21 @@ class TestIosClassMapsModule(TestIosModule):
 
         module_args = {
             "config": [
-                {
-                    "name": "test-class1",
-                    "match_type": "match-all",
-                },
-                {
-                    "name": "test-class2",
-                    "class_type": "standard",
-                    "match_type": "match-all",
-                },
+                {"name": "test-class1", "match_type": "match-all"},
+                {"name": "test-class2", "class_type": "standard", "match_type": "match-all"},
                 {
                     "name": "test-class3",
                     "matches": [
                         {
                             "dscp": {
-                                "dscp_values": [ "8", "0", "56", "af31", "60", "cs1"],
-                                "ip_versions": "ipv4-and-ipv6"
-                            },
+                                "dscp_values": ["8", "0", "56", "af31", "60", "cs1"],
+                                "ip_versions": "ipv4-and-ipv6",
+                            }
                         }
-                    ]
+                    ],
                 },
             ],
-            "state": "merged"
+            "state": "merged",
         }
         set_module_args(module_args)
         result = self.execute_module(changed=False)
@@ -217,7 +192,7 @@ class TestIosClassMapsModule(TestIosModule):
             """
                 Current configuration : 348 bytes
                 !
-                Configuration of Partition - class-map 
+                Configuration of Partition - class-map
                 !
                 !
                 !
@@ -227,8 +202,8 @@ class TestIosClassMapsModule(TestIosModule):
                 class-map match-all test-class1
                   description This is a test description.
                 class-map match-any test-class2
-                 match ip dscp default  7  af11  af23  af41  43  63 
-                 match ip precedence 5 
+                 match ip dscp default  7  af11  af23  af41  43  63
+                 match ip precedence 5
                  match ip rtp 3000 1000
                 !
                 !
@@ -244,16 +219,11 @@ class TestIosClassMapsModule(TestIosModule):
                     "match_type": "match-any",
                     "description": "This is another test description.",
                     "matches": [
-                        {
-                            "metadata":  {
-                                "called_uri": "this_is_a_test_uri.test"
-                            },
-                            "negate": True
-                        }
-                    ]
-                },
+                        {"metadata": {"called_uri": "this_is_a_test_uri.test"}, "negate": True}
+                    ],
+                }
             ],
-            "state": "replaced"
+            "state": "replaced",
         }
 
         set_module_args(module_args)
@@ -264,7 +234,7 @@ class TestIosClassMapsModule(TestIosModule):
             "no match ip dscp 0 22 34 40 43 63 7",
             "no match ip precedence 5",
             "no match ip rtp 3000 1000",
-            "match not metadata called-uri this_is_a_test_uri.test"
+            "match not metadata called-uri this_is_a_test_uri.test",
         ]
         self.assertEqual(sorted(result["commands"]), sorted(commands))
 
@@ -273,7 +243,7 @@ class TestIosClassMapsModule(TestIosModule):
             """\
                 Current configuration : 339 bytes
                 !
-                Configuration of Partition - class-map 
+                Configuration of Partition - class-map
                 !
                 !
                 !
@@ -285,44 +255,28 @@ class TestIosClassMapsModule(TestIosModule):
                   description This is a test description.
                 class-map match-any test-class2
                  match metadata device-model this_is_a_device_model
-                 match mpls experimental topmost 0  1  2  3  4 
+                 match mpls experimental topmost 0  1  2  3  4
                  match packet length min 100 max 1000
                 !
                 !
                 end
-            """,
+            """
         )
         module_args = {
             "config": [
-                {
-                    "name": "test-class1",
-                },
+                {"name": "test-class1"},
                 {
                     "name": "test-class2",
                     "match_type": "match-any",
                     "matches": [
-                        {
-                            "metadata": {
-                                "device_model": "this_is_a_device_model"
-                            }
-                        },
-                        {
-                            "mpls_experimental_topmost": [0, 1, 2, 3, 4]
-                        },
-                        {
-                            "packet_length": {
-                                "min": 100,
-                                "max": 1000
-                            }
-                        }
-                    ]
+                        {"metadata": {"device_model": "this_is_a_device_model"}},
+                        {"mpls_experimental_topmost": [0, 1, 2, 3, 4]},
+                        {"packet_length": {"min": 100, "max": 1000}},
+                    ],
                 },
-                {
-                    "name": "test-class3",
-                    "description": "This is a test description."
-                }
+                {"name": "test-class3", "description": "This is a test description."},
             ],
-            "state": "replaced"
+            "state": "replaced",
         }
         set_module_args(module_args)
         result = self.execute_module(changed=False)
@@ -333,7 +287,7 @@ class TestIosClassMapsModule(TestIosModule):
             """\
                 Current configuration : 365 bytes
                 !
-                Configuration of Partition - class-map 
+                Configuration of Partition - class-map
                 !
                 !
                 !
@@ -359,17 +313,12 @@ class TestIosClassMapsModule(TestIosModule):
                     "name": "new-test-class",
                     "match_type": "match-any",
                     "matches": [
-                        {
-                            "source_mac_address": "abCd:1243:87bf",
-                            "negate": True
-                        },
-                        {
-                            "traffic_category": "optimize"
-                        },
-                    ]
-                },
+                        {"source_mac_address": "abCd:1243:87bf", "negate": True},
+                        {"traffic_category": "optimize"},
+                    ],
+                }
             ],
-            "state": "overridden"
+            "state": "overridden",
         }
         set_module_args(module_args)
         result = self.execute_module(changed=True)
@@ -379,7 +328,7 @@ class TestIosClassMapsModule(TestIosModule):
             "no class-map match-any test-class2",
             "class-map match-any new-test-class",
             "match not source-address mac ABCD.1243.87BF",
-            "match traffic-category optimize"
+            "match traffic-category optimize",
         ]
         self.assertEqual(sorted(result["commands"]), sorted(commands))
 
@@ -388,7 +337,7 @@ class TestIosClassMapsModule(TestIosModule):
             """\
                 Current configuration : 309 bytes
                 !
-                Configuration of Partition - class-map 
+                Configuration of Partition - class-map
                 !
                 !
                 !
@@ -398,56 +347,37 @@ class TestIosClassMapsModule(TestIosModule):
                 class-map match-all test-class1
                 class-map match-all test-class3
                   description This is a test description.
-                 match ip precedence 7 
+                 match ip precedence 7
                 class-map match-any test-class2
                  match vlan  100
                  match vlan inner  20
-                 match not dscp 21  af32  af43  cs5  43  ef 
+                 match not dscp 21  af32  af43  cs5  43  ef
                 !
                 !
                 end
-            """,
+            """
         )
         module_args = {
             "config": [
-                {
-                    "name": "test-class1",
-                },
+                {"name": "test-class1"},
                 {
                     "name": "test-class3",
                     "description": "This is a test description.",
-                    "matches":  [
-                        {
-                            "ip_precedence": [7]
-                        }
-                    ]
+                    "matches": [{"ip_precedence": [7]}],
                 },
                 {
                     "name": "test-class2",
                     "matches": [
+                        {"vlan": 100},
+                        {"vlan_inner": 20},
                         {
-                            "vlan": 100
+                            "dscp": {"dscp_values": [21, "af32", "af43", "cs5", "43", "ef"]},
+                            "negate": True,
                         },
-                        {
-                            "vlan_inner": 20
-                        },
-                        {
-                            "dscp": {
-                                "dscp_values": [
-                                    21,
-                                    "af32",
-                                    "af43",
-                                    "cs5",
-                                    "43",
-                                    "ef"
-                                ]
-                            },
-                            "negate": True
-                        }
-                    ]
-                }
+                    ],
+                },
             ],
-            "state": "overridden"
+            "state": "overridden",
         }
         set_module_args(module_args)
         result = self.execute_module(changed=False)
@@ -458,7 +388,7 @@ class TestIosClassMapsModule(TestIosModule):
             """\
                 Current configuration : 372 bytes
                 !
-                Configuration of Partition - class-map 
+                Configuration of Partition - class-map
                 !
                 !
                 !
@@ -470,7 +400,7 @@ class TestIosClassMapsModule(TestIosModule):
                  match access-group name test_acl
                  match application citrix source cli
                 class-map match-all test-class-map2
-                 match any 
+                 match any
                 class-map match-any test-class-map3
                   description This is a test description.
                  match application attribute media-type audio-video
@@ -485,40 +415,21 @@ class TestIosClassMapsModule(TestIosModule):
                     "name": "test-class-map1",
                     "match_type": "match-any",
                     "matches": [
-                        {
-                            "access_group": {
-                                "number": 1000
-                            }
-                        },
-                        {
-                            "access_group": {
-                                "name": "test_acl"
-                            },
-                        },
-                        {
-                            "application": {
-                                "name": "citrix",
-                                "source": "cli"
-                            }
-                        }
-                    ]
+                        {"access_group": {"number": 1000}},
+                        {"access_group": {"name": "test_acl"}},
+                        {"application": {"name": "citrix", "source": "cli"}},
+                    ],
                 },
-                {
-                    "name": "test-class-map2",
-                    "matches": [
-                        {
-                            "any": True
-                        }
-                    ]
-                }
+                {"name": "test-class-map2", "matches": [{"any": True}]},
             ],
-            "state": "deleted"
+            "state": "deleted",
         }
         set_module_args(module_args)
         result = self.execute_module(changed=True)
         commands = [
             "no class-map match-any test-class-map1",
-            "no class-map match-all test-class-map2"]
+            "no class-map match-all test-class-map2",
+        ]
         self.assertEqual(sorted(result["commands"]), sorted(commands))
 
     def test_ios_class_maps_deleted_idempotent(self):
@@ -526,7 +437,7 @@ class TestIosClassMapsModule(TestIosModule):
             """\
                 Current configuration : 305 bytes
                 !
-                Configuration of Partition - class-map 
+                Configuration of Partition - class-map
                 !
                 !
                 !
@@ -535,7 +446,7 @@ class TestIosClassMapsModule(TestIosModule):
                 !
                 class-map match-all test-class1
                 class-map match-all test-class3
-                 match dscp default  cs1  af31  cs7  60 
+                 match dscp default  cs1  af31  cs7  60
                 class-map match-all test-class2
                  match discard-class 0
                  match security-group destination tag 100
@@ -548,17 +459,10 @@ class TestIosClassMapsModule(TestIosModule):
 
         module_args = {
             "config": [
-                {
-                    "name": "test-class4",
-                    "match_type": "match-all",
-                },
-                {
-                    "name": "test-class5",
-                    "class_type": "standard",
-                    "match_type": "match-all",
-                },
+                {"name": "test-class4", "match_type": "match-all"},
+                {"name": "test-class5", "class_type": "standard", "match_type": "match-all"},
             ],
-            "state": "deleted"
+            "state": "deleted",
         }
         set_module_args(module_args)
         result = self.execute_module(changed=False)
@@ -573,27 +477,13 @@ class TestIosClassMapsModule(TestIosModule):
                     "match_type": "match-any",
                     "description": "This is a test description.",
                     "matches": [
-                        {
-                            "metadata":  {
-                                "global_session_id": "test_session_id"
-                            },
-                            "negate": True
-                        },
-                        {
-                            "packet_length": {
-                                "max": 1500
-                            }
-                        },
-                        {
-                            "protocol": {
-                                "protocol_name": "dns"
-                            },
-                            "negate": True
-                        }
-                    ]
-                },
+                        {"metadata": {"global_session_id": "test_session_id"}, "negate": True},
+                        {"packet_length": {"max": 1500}},
+                        {"protocol": {"protocol_name": "dns"}, "negate": True},
+                    ],
+                }
             ],
-            "state": "rendered"
+            "state": "rendered",
         }
         set_module_args(module_args)
         commands = [
@@ -617,43 +507,28 @@ class TestIosClassMapsModule(TestIosModule):
                  match mpls experimental topmost 0  1  2  3  4
                  match packet length min 100 max 1000
             """,
-            "state": "parsed"
+            "state": "parsed",
         }
         set_module_args(module_args)
         result = self.execute_module(changed=False)
         parsed_list = [
-            {
-                "name": "test-class1",
-                "match_type": "match-all",
-                "class_type": "standard"
-            },
+            {"name": "test-class1", "match_type": "match-all", "class_type": "standard"},
             {
                 "name": "test-class3",
                 "match_type": "match-all",
                 "class_type": "standard",
-                "description": "This is a test description."
+                "description": "This is a test description.",
             },
             {
                 "name": "test-class2",
                 "match_type": "match-any",
                 "class_type": "standard",
                 "matches": [
-                    {
-                        "metadata": {
-                            "device_model": "this_is_a_device_model"
-                        }
-                    },
-                    {
-                        "mpls_experimental_topmost": [0, 1, 2, 3, 4]
-                    },
-                    {
-                        "packet_length": {
-                            "min": 100,
-                            "max": 1000
-                        }
-                    }
-                ]
-            }
+                    {"metadata": {"device_model": "this_is_a_device_model"}},
+                    {"mpls_experimental_topmost": [0, 1, 2, 3, 4]},
+                    {"packet_length": {"min": 100, "max": 1000}},
+                ],
+            },
         ]
         self.assertEqual(parsed_list, result["parsed"])
 
@@ -662,7 +537,7 @@ class TestIosClassMapsModule(TestIosModule):
             """\
                 Current configuration : 365 bytes
                 !
-                Configuration of Partition - class-map 
+                Configuration of Partition - class-map
                 !
                 !
                 !
@@ -683,13 +558,8 @@ class TestIosClassMapsModule(TestIosModule):
             """
         )
         module_args = {
-            "config": [
-                {
-                    "name": "test-class3",
-                    "description": "This a new description.",
-                },
-            ],
-            "state": "overridden"
+            "config": [{"name": "test-class3", "description": "This a new description."}],
+            "state": "overridden",
         }
         set_module_args(module_args)
         result = self.execute_module(changed=True, sort=True)
@@ -698,7 +568,7 @@ class TestIosClassMapsModule(TestIosModule):
             "description This a new description.",
             "no match security-group destination tag 100",
             "no class-map match-any test-class2",
-            "no class-map match-all test-class1"
+            "no class-map match-all test-class1",
         ]
         self.assertEqual(sorted(result["commands"]), sorted(cmds))
 
@@ -707,7 +577,7 @@ class TestIosClassMapsModule(TestIosModule):
             """\
                 Current configuration : 178 bytes
                 !
-                Configuration of Partition - class-map 
+                Configuration of Partition - class-map
                 !
                 !
                 !
@@ -716,27 +586,22 @@ class TestIosClassMapsModule(TestIosModule):
                 !
                 class-map match-all test-class
                 description This is a test description.
-                match cos  0  2 
-                match cos inner  5  6 
+                match cos  0  2
+                match cos inner  5  6
                 !
                 !
                 end
-            """,
+            """
         )
         module_args = {
             "config": [
                 {
                     "name": "test-class",
                     "description": "This is another description.",
-                    "matches": [
-                        {
-                            "vlan": 100,
-                            "negate": True
-                        }
-                    ]
+                    "matches": [{"vlan": 100, "negate": True}],
                 }
             ],
-            "state": "overridden"
+            "state": "overridden",
         }
         set_module_args(module_args)
         result = self.execute_module(changed=True)
@@ -745,6 +610,6 @@ class TestIosClassMapsModule(TestIosModule):
             "description This is another description.",
             "no match cos 0 2",
             "no match cos inner 5 6",
-            "match not vlan 100"
+            "match not vlan 100",
         ]
         self.assertEqual(sorted(result["commands"]), sorted(commands))
